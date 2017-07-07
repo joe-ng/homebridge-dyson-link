@@ -57,3 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+/test.js
+/homebridge-dyson-link.sln
+/homebridge-dyson-link.njsproj
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/homebridge-dyson-link/v15/.suo
