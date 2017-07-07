@@ -2,7 +2,7 @@
 
 const DysonLinkAccessoryModule = require("./DysonLinkAccessory");
 const DysonLinkDevice = require("./DysonLinkDevice").DysonLinkDevice;
-const DysonLinkAccessory = DysonLinkAccessoryModule.DysonLinkAccessory;
+const DysonLinkAccessoryHelper = DysonLinkAccessoryModule.DysonLinkAccessoryHelper;
 
 var Accessory, Service, Characteristic, UUIDGen;
 
@@ -17,7 +17,7 @@ module.exports = function (homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     UUIDGen = homebridge.hap.uuid;
 
-    DysonLinkAccessoryModule.setHomebridge(homebridge);
+    //DysonLinkAccessoryModule.setHomebridge(homebridge);
 
     // For platform plugin to be considered as dynamic platform plugin,
     // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
@@ -30,7 +30,8 @@ class DysonPlatform {
             let device = new DysonLinkDevice(accessory.ip, accesssory.serialNumber, accessory.password, log);
             if (device.valid) {
                 let uuid = UUIDGen.generate(serialNumber);
-                let dysonAccessory = new DysonLinkAccessory(device, accessory.displayName, uuid, log);
+                let dysonAccessory = new Accessory(accessory.displayName, uuid);
+                new DysonLinkAccessoryHelper(device, dysonAccessory, log);
                 this.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", dysonAccessory);
 
             }

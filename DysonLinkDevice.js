@@ -1,8 +1,10 @@
-﻿const mqtt = require('mqtt');
+﻿"use strict";
+
+const mqtt = require('mqtt');
 const crypto = require('crypto');
 const EventEmitter = require("events").EventEmitter;
 
-module.exports = { DysonLinkDevice };
+
 
 class DysonLinkDevice
 {
@@ -176,3 +178,5 @@ class DysonLinkDevice
 
     get valid() { return this._valid; }
 }
+
+module.exports = { DysonLinkDevice };
