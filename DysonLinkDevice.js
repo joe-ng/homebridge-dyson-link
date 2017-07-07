@@ -31,7 +31,7 @@ class DysonLinkDevice
             this.lastUpdated = new Date();
             this.mqttEvent = new EventEmitter();
 
-            this.mqttClient = matt.connect("mqtt://" + this._ip, {
+            this.mqttClient = mqtt.connect("mqtt://" + this._ip, {
                 username: this._id,
                 password: this._password
             });
