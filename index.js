@@ -41,4 +41,15 @@ class DysonPlatform {
             }
         });
     }
+
+    configureAccessory(accessory) {
+        this.log(accessory.displayName, "Configure Accessory");
+        accessory.reachable = true;
+        accessory.on('identify', function (paired, callback) {
+            platform.log(accessory.displayName, "Identify!!!");
+            callback();
+        });
+
+        this.accessories.push(accessory);
+    }
 }
