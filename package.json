@@ -1,6 +1,6 @@
 {
   "name": "homebridge-dyson-link",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Homebridge Plugin for Dyson Link",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,8 @@
     "url": "git+https://github.com/joe-ng/homebridge-dyson-link.git"
   },
   "keywords": [
-    "homebridge-plugin", "dyson"
+    "homebridge-plugin",
+    "dyson"
   ],
   "engines": {
     "node": ">=8.0.0",
