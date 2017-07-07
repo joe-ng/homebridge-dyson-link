@@ -32,7 +32,7 @@ class DysonPlatform {
                 let uuid = UUIDGen.generate(accessory.serialNumber);
                 let dysonAccessory = new Accessory(accessory.displayName, uuid);
                 new DysonLinkAccessoryHelper(device, dysonAccessory, log);
-                api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", dysonAccessory);
+                api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
 
             }
         });
