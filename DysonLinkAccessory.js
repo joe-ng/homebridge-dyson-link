@@ -8,8 +8,8 @@ class DysonLinkAccessoryHelper {
         this.accessory = accessory;
         this.log = log;
 
-        initSensor();
-        initFanState();
+        this.initSensor();
+        this.initFanState();
     }
 
     initSensor() {

@@ -87,7 +87,7 @@ class DysonLinkDevice
             callback(null, this.rotateSpeed);
         });
         // Request for udpate
-        requestForCurrentUpdate();
+        this.requestForCurrentUpdate();
     }
 
     setRotate(value, callback) {
@@ -100,7 +100,7 @@ class DysonLinkDevice
             callback(null, this.rotate);
         });
         // Request for udpate
-        requestForCurrentUpdate();
+        this.requestForCurrentUpdate();
     }
 
     setFanOn(value, callback) {
@@ -113,7 +113,7 @@ class DysonLinkDevice
             callback(null, this.fan);
         });
         // Request for udpate
-        requestForCurrentUpdate();
+        this.requestForCurrentUpdate();
     }
 
     setFanAuto(value, callback) {
@@ -126,7 +126,7 @@ class DysonLinkDevice
             callback(null, this.auto);
         });
         // Request for udpate
-        requestForCurrentUpdate();
+        this.requestForCurrentUpdate();
     }
 
     getTemperture(callback) {
@@ -137,7 +137,7 @@ class DysonLinkDevice
                 callback(null, this.temperature);
             });
             // Request for udpate
-            requestForCurrentUpdate();
+            this.requestForCurrentUpdate();
         }
         else {
             callback(null, this.temperature);
@@ -152,7 +152,7 @@ class DysonLinkDevice
                 callback(null, this.humidity);
             });
             // Request for udpate
-            requestForCurrentUpdate();
+            this.requestForCurrentUpdate();
         }
         else {
             callback(null, this.humidity);
@@ -168,7 +168,7 @@ class DysonLinkDevice
                 callback(null, this.airQuality);
             });
             // Request for udpate
-            requestForCurrentUpdate();
+            this.requestForCurrentUpdate();
         }
         else {
             callback(null, this.airQuality);
