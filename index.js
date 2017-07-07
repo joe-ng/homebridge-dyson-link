@@ -26,6 +26,10 @@ module.exports = function (homebridge) {
 
 class DysonPlatform {
     constructor(log, config, api) {
+        this.log = log;
+        this.config = config;
+        this.accessories = [];
+
         config.accessories.forEach((accessory) => {
             let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, log);
             if (device.valid) {
@@ -33,7 +37,7 @@ class DysonPlatform {
                 let dysonAccessory = new Accessory(accessory.displayName, uuid);
                 new DysonLinkAccessoryHelper(device, dysonAccessory, log);
                 api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
-
+                this.accessories.push(accessory);
             }
         });
     }
