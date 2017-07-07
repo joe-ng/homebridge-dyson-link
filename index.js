@@ -29,7 +29,7 @@ class DysonPlatform {
         config.accessories.forEach((accessory) => {
             let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, log);
             if (device.valid) {
-                let uuid = UUIDGen.generate(serialNumber);
+                let uuid = UUIDGen.generate(accessory.serialNumber);
                 let dysonAccessory = new Accessory(accessory.displayName, uuid);
                 new DysonLinkAccessoryHelper(device, dysonAccessory, log);
                 this.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", dysonAccessory);
