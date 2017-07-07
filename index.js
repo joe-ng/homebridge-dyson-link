@@ -27,7 +27,7 @@ module.exports = function (homebridge) {
 class DysonPlatform {
     constructor(log, config, api) {
         config.accessories.forEach((accessory) => {
-            let device = new DysonLinkDevice(accessory.ip, accesssory.serialNumber, accessory.password, log);
+            let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, log);
             if (device.valid) {
                 let uuid = UUIDGen.generate(serialNumber);
                 let dysonAccessory = new Accessory(accessory.displayName, uuid);
