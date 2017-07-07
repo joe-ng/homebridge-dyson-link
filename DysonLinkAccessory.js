@@ -37,12 +37,12 @@ class DysonLinkAccessoryHelper {
             .on("get", this.device.isRotate)
             .on("set", this.device.setRotate);
 
-        this.accessory.addService(Service.Switch , "Rotation - " + this.displayName)
+        this.accessory.addService(Service.Switch , "Rotation - " + this.displayName, "Rotate")
             .getCharacteristic(Characteristic.On)
             .on("get", this.device.getRotateSpeed)
             .on("set", this.device.setRotateSpeed);
 
-        this.accessory.addService(Service.Switch, "Auto - " + this.displayName)
+        this.accessory.addService(Service.Switch, "Auto - " + this.displayName, "Auto")
             .getCharacteristic(Characteristic.On)
             .on("get", this.device.isFanAuto)
             .on("set", this.device.setFanAuto);
