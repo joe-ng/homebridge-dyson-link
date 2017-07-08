@@ -53,7 +53,7 @@ class DysonPlatform {
                             platform.accessories.push(accessory);
                         }
                         else {
-                            this.log("Device cached.");
+                            platform.log("Device cached.");
                         }
                     }
                 });
