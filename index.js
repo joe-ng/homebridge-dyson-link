@@ -33,6 +33,7 @@ class DysonPlatform {
         config.accessories.forEach((accessory) => {
             let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, log);
             if (device.valid) {
+                log.log("Device serial number format valids - " + accessory.serialNumber);
                 let uuid = UUIDGen.generate(accessory.serialNumber);
                 let dysonAccessory = new Accessory(accessory.displayName, uuid);
                 new DysonLinkAccessoryHelper(device, dysonAccessory, log);
@@ -50,6 +51,6 @@ class DysonPlatform {
             callback();
         });
 
-        this.accessories.push(accessory);
+        //this.accessories.push(accessory);
     }
 }
