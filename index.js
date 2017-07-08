@@ -17,8 +17,6 @@ module.exports = function (homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     UUIDGen = homebridge.hap.uuid;
 
-    //DysonLinkAccessoryModule.setHomebridge(homebridge);
-
     // For platform plugin to be considered as dynamic platform plugin,
     // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
     homebridge.registerPlatform("homebridge-dyson-link", "DysonPlatform", DysonPlatform, true);
@@ -30,17 +28,38 @@ class DysonPlatform {
         this.config = config;
         this.accessories = [];
 
-        config.accessories.forEach((accessory) => {
-            let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, log);
-            if (device.valid) {
-                log.log("Device serial number format valids - " + accessory.serialNumber);
-                let uuid = UUIDGen.generate(accessory.serialNumber);
-                let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                new DysonLinkAccessoryHelper(device, dysonAccessory, log);
-                api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
-                this.accessories.push(accessory);
-            }
-        });
+        if (api) {
+            // Save the API object as plugin needs to register new accessory via this object.
+            this.api = api;
+
+            // Listen to event "didFinishLaunching", this means homebridge already finished loading cached accessories
+            // Platform Plugin should only register new accessory that doesn't exist in homebridge after this event.
+            // Or start discover new accessories
+            this.api.on('didFinishLaunching', function () {
+
+                this.log("Finished launching. Start to create accessory from config");
+                config.accessories.forEach((accessory) => {
+                    this.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
+                    let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, log);
+                    if (device.valid) {
+                        this.log("Device serial number format valids");
+                        let uuid = UUIDGen.generate(accessory.serialNumber);
+                        // Check if the accessory got cached
+                        if (!this.accessories.find((item) => item.UUID === uuid)) {
+                            this.log("Device not cached. Create a new one");
+                            let dysonAccessory = new Accessory(accessory.displayName, uuid);
+                            new DysonLinkAccessoryHelper(device, dysonAccessory, log);
+                            api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
+                            this.accessories.push(accessory);
+                        }
+                        else {
+                            this.log("Device cached.");
+                        }
+                    }
+                });
+            });
+        }
+       
     }
 
     configureAccessory(accessory) {
@@ -51,6 +70,6 @@ class DysonPlatform {
             callback();
         });
 
-        //this.accessories.push(accessory);
+        this.accessories.push(accessory);
     }
 }
