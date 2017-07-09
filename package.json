@@ -1,6 +1,6 @@
 {
   "name": "homebridge-dyson-link",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Homebridge Plugin for Dyson Link",
   "main": "index.js",
   "scripts": {
