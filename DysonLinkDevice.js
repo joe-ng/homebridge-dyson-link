@@ -12,10 +12,11 @@ class DysonLinkDevice
     static get STATE_EVENT() { return "state-updated"; }
 
     constructor(ip, serialNumber, password, log) {
+        this.log = log;
         let serialRegex = /DYSON-(\w{3}-\w{2}-\w{8})-(\w{3})/;
         let [, id, model] = serialNumber.match(serialRegex) || [];
         if (!id || !model) {
-            log.error("Incorrect serial number");
+            this.log.error("Incorrect serial number");
             this._valid = false;
         }
 
@@ -39,13 +40,13 @@ class DysonLinkDevice
             this.statusSubscribeTopic = this._model + "/" + this._id+"/status/current";
             this.commandTopic = this._model + "/" + this._id + "/command";
 
-            this.mqttClient.on('connect', function () {
-                log.log("connected");
-                mqttClient.subscribe(topic);
+            this.mqttClient.on('connect', () => {
+                this.log.info("connected to dyson. subscribe now");
+                this.mqttClient.subscribe(topic);
             });
 
-            this.mqttClient.on('message', function (topic, message) {
-                log.log(message.toString());
+            this.mqttClient.on('message', (topic, message) => {
+                this.log.info(message.toString());
                 let result = JSON.parse(message);
                 if (result.msg == "ENVIRONMENTAL-CURRENT-SENSOR-DATA") {
                     this.lastUpdated = new Date(result.time);
@@ -83,7 +84,7 @@ class DysonLinkDevice
     }
 
     getRotateSpeed(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, function () {
+        this.mqttEvent.once(this.STATE_EVENT,  () => {
             callback(null, this.rotateSpeed);
         });
         // Request for udpate
@@ -96,7 +97,7 @@ class DysonLinkDevice
     }
 
     isRotate(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, function () {
+        this.mqttEvent.once(this.STATE_EVENT, () =>  {
             callback(null, this.rotate);
         });
         // Request for udpate
@@ -109,7 +110,7 @@ class DysonLinkDevice
     }
 
     isFanOn(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, function () {
+        this.mqttEvent.once(this.STATE_EVENT, () =>  {
             callback(null, this.fan);
         });
         // Request for udpate
@@ -122,7 +123,7 @@ class DysonLinkDevice
     }
 
     isFanAuto(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, function () {
+        this.mqttEvent.once(this.STATE_EVENT, () =>  {
             callback(null, this.auto);
         });
         // Request for udpate
@@ -132,7 +133,7 @@ class DysonLinkDevice
     getTemperture(callback) {
         let currentTime = new Date();        
         if ((currentTime.getTime() - this.lastUpdated.getTime()) > (60 * 1000)) {
-            this.mqttEvent.once(this.SENSOR_EVENT, function () {
+            this.mqttEvent.once(this.SENSOR_EVENT, () => {
                 // Wait until the update and return
                 callback(null, this.temperature);
             });
@@ -147,7 +148,7 @@ class DysonLinkDevice
     getHumidity() {
         let currentTime = new Date();
         if ((currentTime.getTime() - this.lastUpdated.getTime()) > (60 * 1000)) {
-            this.mqttEvent.once(this.SENSOR_EVENT, function () {
+            this.mqttEvent.once(this.SENSOR_EVENT, () => {
                 // Wait until the update and return
                 callback(null, this.humidity);
             });
@@ -163,7 +164,7 @@ class DysonLinkDevice
     getAirQuality() {
         let currentTime = new Date();
         if ((currentTime.getTime() - this.lastUpdated.getTime()) > (60 * 1000)) {
-            this.mqttEvent.once(this.SENSOR_EVENT, function () {
+            this.mqttEvent.once(this.SENSOR_EVENT, () =>  {
                 // Wait until the update and return
                 callback(null, this.airQuality);
             });
