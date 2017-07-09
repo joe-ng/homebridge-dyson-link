@@ -41,26 +41,30 @@ class DysonLinkDevice
             this.commandTopic = this._model + "/" + this._id + "/command";
 
             this.mqttClient.on('connect', () => {
-                this.log.info("Connected to " + this.serialNumber + ". subscribe now");
+                this.log.info("Connected to " + this._id + ". subscribe now");
                 this.mqttClient.subscribe(this.statusSubscribeTopic);
             });
 
             this.mqttClient.on('message', (topic, message) => {
                 this.log.info(message.toString());
                 let result = JSON.parse(message);
-                if (result.msg == "ENVIRONMENTAL-CURRENT-SENSOR-DATA") {
-                    this.lastUpdated = new Date(result.time);
-                    this.airQuality = Math.min(Math.max(Math.floor((parseInt(result.data.pact) + parseInt(result.data.vact)) / 2), 1), 5);
-                    this.humidity = Number.parseInt(result.data.hact);
-                    this.temperature = Number.parseFloat(result.data.tact) / 10 / 10;
-                    this.mqttEvent.emit(this.SENSOR_EVENT);
-                }
-                else if (result.msg == "CURRENT-STATE") {
-                    this.fan = result["product-state"]["fmod"] === "ON";
-                    this.auto = result["product-state"]["fmod"] === "AUTO";
-                    this.rotate = result["product-state"]["oson"] === "ON";
-                    this.rotateSpeed = Number.parseInt(result["product-state"]["fnsp"]) * 10;
-                    this.mqttEvent.emit(this.STATE_EVENT);
+                switch (result.msg) {
+                    case "ENVIRONMENTAL-CURRENT-SENSOR-DATA":
+                        this.log.info("Update sensor data");
+                        this.lastUpdated = new Date(result.time);
+                        this.airQuality = Math.min(Math.max(Math.floor((parseInt(result.data.pact) + parseInt(result.data.vact)) / 2), 1), 5);
+                        this.humidity = Number.parseInt(result.data.hact);
+                        this.temperature = Number.parseFloat(result.data.tact) / 10 / 10;
+                        this.mqttEvent.emit(this.SENSOR_EVENT);
+                        break;
+                    case "CURRENT-STATE":
+                        this.log.info("Update fan data");
+                        this.fan = result["product-state"]["fmod"] === "ON";
+                        this.auto = result["product-state"]["fmod"] === "AUTO";
+                        this.rotate = result["product-state"]["oson"] === "ON";
+                        this.rotateSpeed = Number.parseInt(result["product-state"]["fnsp"]) * 10;
+                        this.mqttEvent.emit(this.STATE_EVENT);
+                        break;
                 }
             });
         }
@@ -86,7 +90,8 @@ class DysonLinkDevice
     }
 
     getRotateSpeed(callback) {
-        this.mqttEvent.once(this.STATE_EVENT,  () => {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info("Fan Rotate Speed:" + this.rotateSpeed);
             callback(null, this.rotateSpeed);
         });
         // Request for udpate
@@ -100,7 +105,7 @@ class DysonLinkDevice
 
     isRotate(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info("Fan Rotate:" + this.rotate);
+            this.log.info("Fan Rotate: " + this.rotate);
             callback(null, this.rotate);
         });
         // Request for udpate
@@ -114,7 +119,7 @@ class DysonLinkDevice
 
     isFanOn(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info("Fan On:" + this.fan);
+            this.log.info("Fan On: " + this.fan);
             callback(null, this.fan);
         });
         // Request for udpate
@@ -128,7 +133,7 @@ class DysonLinkDevice
 
     isFanAuto(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info("Fan Auto:" + this.auto);
+            this.log.info("Fan Auto: " + this.auto);
             callback(null, this.auto);
         });
         // Request for udpate
@@ -140,7 +145,7 @@ class DysonLinkDevice
         let currentTime = new Date();        
         if ((currentTime.getTime() - this.lastUpdated.getTime()) > (60 * 1000)) {
             this.mqttEvent.once(this.SENSOR_EVENT, () => {
-                this.log.info("return new value" + this.temperature);
+                this.log.info("return new value: " + this.temperature);
                 // Wait until the update and return
                 callback(null, this.temperature);
             });
@@ -148,7 +153,7 @@ class DysonLinkDevice
             this.requestForCurrentUpdate();
         }
         else {
-            this.log.info("return existing value" + this.temperature);
+            this.log.info("return existing value: " + this.temperature);
             callback(null, this.temperature);
         }
     }
@@ -158,7 +163,7 @@ class DysonLinkDevice
         let currentTime = new Date();
         if ((currentTime.getTime() - this.lastUpdated.getTime()) > (60 * 1000)) {
             this.mqttEvent.once(this.SENSOR_EVENT, () => {
-                this.log.info("return new value" + this.humidity);
+                this.log.info("return new value: " + this.humidity);
                 // Wait until the update and return
                 callback(null, this.humidity);
             });
@@ -166,7 +171,7 @@ class DysonLinkDevice
             this.requestForCurrentUpdate();
         }
         else {
-            this.log.info("return existing value" + this.humidity);
+            this.log.info("return existing value: " + this.humidity);
             callback(null, this.humidity);
         }
 
@@ -177,7 +182,7 @@ class DysonLinkDevice
         let currentTime = new Date();
         if ((currentTime.getTime() - this.lastUpdated.getTime()) > (60 * 1000)) {
             this.mqttEvent.once(this.SENSOR_EVENT, () => {
-                this.log.info("return new value" + this.airQuality);
+                this.log.info("return new value: " + this.airQuality);
                 // Wait until the update and return
                 callback(null, this.airQuality);
             });
@@ -185,7 +190,7 @@ class DysonLinkDevice
             this.requestForCurrentUpdate();
         }
         else {
-            this.log.info("return existing value" + this.airQuality);
+            this.log.info("return existing value: " + this.airQuality);
             callback(null, this.airQuality);
         }
 

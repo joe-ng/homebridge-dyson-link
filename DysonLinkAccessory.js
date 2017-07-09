@@ -13,9 +13,10 @@ class DysonLinkAccessoryHelper {
     }
 
     initSensor() {
+        this.log("Init Sensor");
         this.accessory.addService(Service.TemperatureSensor, this.displayName)
             .getCharacteristic(Characteristic.CurrentTemperature)
-            .setProps({ minValue: -50, maxValue: 100 })
+            .setProps({ minValue: -50, maxValue: 100, unit: "celsius" })
             .on("get", this.device.getTemperture.bind(this.device));
         this.accessory.addService(Service.HumiditySensor, this.displayName)
             .getCharacteristic(Characteristic.CurrentRelativeHumidity)
@@ -28,6 +29,7 @@ class DysonLinkAccessoryHelper {
     }
 
     initFanState() {
+        this.log("Init Fan State");
         let fan = this.accessory.addService(Service.Fan,this.displayName);
 
         fan.getCharacteristic(Characteristic.On)
