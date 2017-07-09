@@ -42,7 +42,7 @@ class DysonLinkDevice
 
             this.mqttClient.on('connect', () => {
                 this.log.info("connected to dyson. subscribe now");
-                this.mqttClient.subscribe(topic);
+                this.mqttClient.subscribe(this.statusSubscribeTopic);
             });
 
             this.mqttClient.on('message', (topic, message) => {
