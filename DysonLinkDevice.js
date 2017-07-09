@@ -41,7 +41,7 @@ class DysonLinkDevice
             this.commandTopic = this._model + "/" + this._id + "/command";
 
             this.mqttClient.on('connect', () => {
-                this.log.info("connected to dyson. subscribe now");
+                this.log.info("Connected to " + this.serialNumber + ". subscribe now");
                 this.mqttClient.subscribe(this.statusSubscribeTopic);
             });
 
