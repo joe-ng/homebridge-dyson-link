@@ -10,7 +10,7 @@ class DysonLinkDevice
 {
     static get SENSOR_EVENT() { return "sensor-updated"; }
     static get STATE_EVENT() { return "state-updated"; }
-
+    
     constructor(ip, serialNumber, password, log) {
         this.log = log;
         let serialRegex = /DYSON-(\w{3}-\w{2}-\w{8})-(\w{3})/;
@@ -58,11 +58,15 @@ class DysonLinkDevice
                         this.mqttEvent.emit(this.SENSOR_EVENT);
                         break;
                     case "CURRENT-STATE":
+                    case "STATE-CHANGE":
                         this.log.info("Update fan data");
                         this.fan = result["product-state"]["fmod"] === "ON";
                         this.auto = result["product-state"]["fmod"] === "AUTO";
                         this.rotate = result["product-state"]["oson"] === "ON";
                         this.rotateSpeed = Number.parseInt(result["product-state"]["fnsp"]) * 10;
+                        if (heatAvailable) {
+                            this.heat = result["product-state"]["hmod"];
+                        }
                         this.mqttEvent.emit(this.STATE_EVENT);
                         break;
                 }
@@ -197,6 +201,7 @@ class DysonLinkDevice
     }
 
     get valid() { return this._valid; }
+    get heatAvailable() { return this._model === "455"; }
 }
 
 module.exports = { DysonLinkDevice };
