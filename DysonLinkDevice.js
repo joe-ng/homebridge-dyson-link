@@ -64,7 +64,7 @@ class DysonLinkDevice
                         this.auto = result["product-state"]["fmod"] === "AUTO";
                         this.rotate = result["product-state"]["oson"] === "ON";
                         this.rotateSpeed = Number.parseInt(result["product-state"]["fnsp"]) * 10;
-                        if (heatAvailable) {
+                        if (this.heatAvailable) {
                             this.heat = result["product-state"]["hmod"];
                         }
                         this.mqttEvent.emit(this.STATE_EVENT);
