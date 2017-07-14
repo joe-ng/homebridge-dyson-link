@@ -45,7 +45,8 @@ class DysonPlatform {
                         platform.log("Device serial number format valids");
                         let uuid = UUIDGen.generate(accessory.serialNumber);
                         // Check if the accessory got cached
-                        if (!platform.accessories.find((item) => item.UUID === uuid)) {
+                        let cachedAccessory = platform.accessories.find((item) => item.UUID === uuid);
+                        if (!cachedAccessory) {
                             platform.log("Device not cached. Create a new one");
                             let dysonAccessory = new Accessory(accessory.displayName, uuid);
                             new DysonLinkAccessoryHelper(device, dysonAccessory, platform.log);
@@ -53,7 +54,8 @@ class DysonPlatform {
                             platform.accessories.push(accessory);
                         }
                         else {
-                            platform.log("Device cached.");
+                            platform.log("Device cached. Set up the service/characteristics");
+                            new DysonLinkAccessoryHelper(device, cachedAccessory, platform.log);
                         }
                     }
                 });
