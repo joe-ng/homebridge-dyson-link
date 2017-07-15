@@ -7,7 +7,9 @@ This is just a hobby project as I just bought my Dyson Link device and would lik
 
 Assuming you have homebridge installed and set up, you can run below command to install this plugin
 
-npm install -g homebridge-dyson-link
+`npm install -g homebridge-dyson-link`
+
+Then, you can add the platform configuration to your config.json
 
 ## Configuration
 
