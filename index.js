@@ -40,7 +40,7 @@ class DysonPlatform {
                 platform.log("Finished launching. Start to create accessory from config");
                 config.accessories.forEach((accessory) => {
                     platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
-                    let device = new DysonLinkDevice(accessory.ip, accessory.serialNumber, accessory.password, platform.log);
+                    let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, accessory.password, platform.log);
                     if (device.valid) {
                         platform.log("Device serial number format valids");
                         let uuid = UUIDGen.generate(accessory.serialNumber);
@@ -49,13 +49,12 @@ class DysonPlatform {
                         if (!cachedAccessory) {
                             platform.log("Device not cached. Create a new one");
                             let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                            new DysonLinkAccessoryHelper(device, dysonAccessory, platform.log);
+                            new DysonLinkAccessoryHelper(accessory.displayName, device, dysonAccessory, platform.log);
                             platform.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
                             platform.accessories.push(accessory);
                         }
                         else {
-                            platform.log("Device cached. Set up the service/characteristics");
-                            new DysonLinkAccessoryHelper(device, cachedAccessory, platform.log);
+                            platform.log("Device cached. No set up required");
                         }
                     }
                 });
@@ -67,8 +66,8 @@ class DysonPlatform {
     configureAccessory(accessory) {
         this.log(accessory.displayName, "Configure Accessory");
         accessory.reachable = true;
-        accessory.on('identify', function (paired, callback) {
-            platform.log(accessory.displayName, "Identify!!!");
+        accessory.on('identify', (paired, callback) => {
+            this.log(accessory.displayName, "Identify!!!");
             callback();
         });
 

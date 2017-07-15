@@ -1,0 +1,22 @@
+{
+  "bridge": {
+    
+  },
+  "description": "HomeBridge HTTP Status Control",
+  "accessories": [],
+  "platforms": [
+      // This is the config    
+    {
+      "platform": "DysonPlatform",
+      "name": "DysonPlatform",
+      "accessories": [
+        {
+          "ip": "ip of your device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
+          "password": "password of your device"
+        }
+      ]
+    }
+  ]
+}
