@@ -18,3 +18,21 @@ See config-sample.json for example
 We will need to input the IP, display name, serial number and password to the config
 
 The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters) of your device can be found on the device and the manual.
+
+```
+"platforms": [
+      // This is the config    
+    {
+      "platform": "DysonPlatform",
+      "name": "DysonPlatform",
+      "accessories": [
+        {
+          "ip": "ip of your device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
+          "password": "password of your device"
+        }
+      ]
+    }
+  ],
+```
