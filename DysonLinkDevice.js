@@ -86,7 +86,7 @@ class DysonLinkDevice {
     setState(state) {
         let currentTime = new Date();
         let message = { msg: "STATE-SET", time: currentTime.toISOString(), data: state };
-        this.log.info(this.displayName + " - Set State:" + state.toString());
+        this.log.info(this.displayName + " - Set State:" + JSON.stringify(state));
         this.mqttClient.publish(this.commandTopic, JSON.stringify(message));
     }
 
@@ -98,10 +98,10 @@ class DysonLinkDevice {
                 this.setState({ fmod: "OFF" });
                 break;
             case 1:
-                this.setState({ hmod: "ON" });
+                this.setState({ hmod: "HEAT" });
                 break;
             case 2:
-                this.setState({ fmod: "ON" });
+                this.setState({ fmod: "FAN" });
                 break;
             case 3:
                 this.setState({ fmod: "AUTO" });
@@ -161,7 +161,7 @@ class DysonLinkDevice {
     }
 
     setHeatOn(value, callback) {
-        this.setState({ hmod: value ? "ON" : "OFF" });
+        this.setState({ hmod: value ? "HEAT" : "OFF" });
         this.isHeatOn(callback);
     }
 
