@@ -126,7 +126,7 @@ class DysonLinkDevice {
     getFanSpeed(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan Speed:" + this.fanState.fanSpeed);
-            callback(null, this.fanSpeed);
+            callback(null, this.fanState.fanSpeed);
         });
         // Request for udpate
         this.requestForCurrentUpdate();
