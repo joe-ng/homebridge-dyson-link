@@ -1,5 +1,16 @@
 ﻿const DysonLinkDevice = require("./DysonLinkDevice").DysonLinkDevice;
 
+var Accessory, Service, Characteristic;
+
+function setHomebridge(homebridge) {
+    // Accessory must be created from PlatformAccessory Constructor
+    Accessory = homebridge.platformAccessory;
+
+    // Service and Characteristic are from hap-nodejs
+    Service = homebridge.hap.Service;
+    Characteristic = homebridge.hap.Characteristic;
+}
+
 class DysonLinkAccessoryHelper {
     constructor(displayName, device, accessory, log) {
 
@@ -67,5 +78,5 @@ class DysonLinkAccessoryHelper {
 
 
 module.exports = {
-    DysonLinkAccessoryHelper
+    DysonLinkAccessoryHelper, setHomebridge
 }

@@ -17,6 +17,8 @@ module.exports = function (homebridge) {
     Characteristic = homebridge.hap.Characteristic;
     UUIDGen = homebridge.hap.uuid;
 
+    DysonLinkAccessoryModule.setHomebridge(homebridge);
+
     // For platform plugin to be considered as dynamic platform plugin,
     // registerPlatform(pluginName, platformName, constructor, dynamic), dynamic must be true
     homebridge.registerPlatform("homebridge-dyson-link", "DysonPlatform", DysonPlatform, true);
