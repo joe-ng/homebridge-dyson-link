@@ -63,6 +63,11 @@ class DysonLinkAccessoryHelper {
             .on("get", this.device.isRotate.bind(this.device))
             .on("set", this.device.setRotate.bind(this.device));
 
+        this.accessory.addService(Service.Switch, "Night Mode - " + this.displayName, "Night Mode")
+            .getCharacteristic(Characteristic.On)
+            .on("get", this.device.isNightMode.bind(this.device))
+            .on("set", this.device.setNightMode.bind(this.device));
+
         // Set Heat 
         if (this.device.heatAvailable) {
             this.log("Heat Available. Add Heat button");

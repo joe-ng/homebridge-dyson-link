@@ -132,7 +132,7 @@ class DysonLinkDevice {
         this.requestForCurrentUpdate();
     }
 
-    setisNightMode(value, callback) {
+    setNightMode(value, callback) {
         this.setState({ nmod: value ? "ON" : "OFF" });
         this.isNightMode(callback);
     }
