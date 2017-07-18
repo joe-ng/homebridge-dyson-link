@@ -21,7 +21,7 @@ The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters)
 
 ```
 "platforms": [
-      // This is the config    
+    // This is the config for this plugin  
     {
       "platform": "DysonPlatform",
       "name": "DysonPlatform",
@@ -31,8 +31,25 @@ The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters)
           "displayName": "Name to be shown on Home App",
           "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
           "password": "password of your device"
+        },
+        {
+          "ip": "ip of your second device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
+          "password": "password of your second device"
         }
+        // If you have more than one device(s), just add the same config below
       ]
     }
+    // End of the config
   ],
 ```
+
+## Features Supported
+
+* Fan On/Off
+* Fan Speed
+* Rotation On/Off
+* Auto On/Off
+* Night Mode On/Off
+* Heat On/Off (If your device supports this)
