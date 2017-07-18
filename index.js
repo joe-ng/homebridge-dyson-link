@@ -59,7 +59,7 @@ class DysonPlatform {
                             platform.log("Device cached. Try to update this");
                             let dysonAccessory = new Accessory(accessory.displayName, uuid);
                             new DysonLinkAccessoryHelper(accessory.displayName, device, dysonAccessory, platform.log);
-                            platform.api.updatePlatformAccessories(dysonAccessory);
+                            platform.api.updatePlatformAccessories([dysonAccessory]);                            
                         }
                     }
                 });
