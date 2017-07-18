@@ -56,7 +56,10 @@ class DysonPlatform {
                             platform.accessories.push(accessory);
                         }
                         else {
-                            platform.log("Device cached. No set up required");
+                            platform.log("Device cached. Try to update this");
+                            let dysonAccessory = new Accessory(accessory.displayName, uuid);
+                            new DysonLinkAccessoryHelper(accessory.displayName, device, dysonAccessory, platform.log);
+                            platform.api.updatePlatformAccessories(dysonAccessory);
                         }
                     }
                 });
