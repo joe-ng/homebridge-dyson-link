@@ -2,7 +2,7 @@
 
 const DysonLinkAccessoryModule = require("./DysonLinkAccessory");
 const DysonLinkDevice = require("./DysonLinkDevice").DysonLinkDevice;
-const DysonLinkAccessoryHelper = DysonLinkAccessoryModule.DysonLinkAccessoryHelper;
+const DysonLinkAccessory = DysonLinkAccessoryModule.DysonLinkAccessory;
 
 var Accessory, Service, Characteristic, UUIDGen;
 
@@ -37,10 +37,10 @@ class DysonPlatform {
             // Listen to event "didFinishLaunching", this means homebridge already finished loading cached accessories
             // Platform Plugin should only register new accessory that doesn't exist in homebridge after this event.
             // Or start discover new accessories
-            this.api.on('didFinishLaunching', function () {
+            this.api.on('didFinishLaunching',  () => {
 
                 platform.log("Finished launching. Start to create accessory from config");
-                config.accessories.forEach((accessory) => {
+                this.config.accessories.forEach((accessory) => {
                     platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
                     let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, accessory.password, platform.log);
                     if (device.valid) {
@@ -51,15 +51,15 @@ class DysonPlatform {
                         if (!cachedAccessory) {
                             platform.log("Device not cached. Create a new one");
                             let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                            new DysonLinkAccessoryHelper(accessory.displayName, device, dysonAccessory, platform.log);
+                            new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log);
                             platform.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
                             platform.accessories.push(accessory);
                         }
                         else {
                             platform.log("Device cached. Try to update this");
-                            let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                            new DysonLinkAccessoryHelper(accessory.displayName, device, dysonAccessory, platform.log);
-                            platform.api.updatePlatformAccessories([dysonAccessory]);                            
+                            cachedAccessory.displayName = accessory.displayName;                  
+                            new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log);
+                            platform.api.updatePlatformAccessories([cachedAccessory]);                            
                         }
                     }
                 });

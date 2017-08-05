@@ -26,11 +26,11 @@ class DysonFanState {
         }
     }
 
-    get fanOn () { return this._fan; }
+    get fanOn() { return this._fan; }
     get fanAuto() {return this._auto;}
     get fanRotate() {return this._rotate;}
     get fanSpeed() {return this._speed;}
-    get fanHeat () {return this._heat;}
+    get fanHeat() {return this._heat;}
     get fanState() {return this._fanState;}
     get nightMode() {return this._nightMode;}
 
