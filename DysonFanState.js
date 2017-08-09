@@ -10,6 +10,7 @@ class DysonFanState {
         this._auto = newState["product-state"]["fmod"] === "AUTO";
         this._rotate = newState["product-state"]["oson"] === "ON";
         this._nightMode = newState["product-state"]["nmod"] === "ON";
+        this._focus = newState["product-state"]["ffoc"] === "ON";
         this._speed = Number.parseInt(newState["product-state"]["fnsp"]) * 10;
         if (this.heatAvailable) {
             this._heat = newState["product-state"]["hmod"] === "HEAT";
@@ -33,6 +34,7 @@ class DysonFanState {
     get fanHeat() {return this._heat;}
     get fanState() {return this._fanState;}
     get nightMode() {return this._nightMode;}
+    get fanFocused() {return this._focus;}
 
 }
 

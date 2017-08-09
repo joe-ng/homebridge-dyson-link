@@ -146,6 +146,20 @@ class DysonLinkDevice {
         this.requestForCurrentUpdate();
     }
 
+    setFocusedJet(value, callback) {
+        this.setState({ ffoc: value ? "ON" : "OFF" });
+        this.isFocusedJet(callback);
+    }
+
+    isFocusedJet(callback) {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Focused Jet: " + this.fanState.fanFocused);
+            callback(null, this.fanState.fanFocused);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+
     setRotate(value, callback) {
         this.setState({ oson: value ? "ON" : "OFF" });
         this.isRotate(callback);

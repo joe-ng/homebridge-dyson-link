@@ -91,6 +91,13 @@ class DysonLinkAccessory {
             .on("get", this.device.isNightMode.bind(this.device))
             .on("set", this.device.setNightMode.bind(this.device));
 
+        this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");   
+        
+        this.focusSwitch
+            .getCharacteristic(Characteristic.On)
+            .on("get", this.device.isFocusedJet.bind(this.device))
+            .on("set", this.device.setFocusedJet.bind(this.device));
+
         // Set Heat 
         if (this.device.heatAvailable) {
             this.log("Heat Available. Add Heat button");
