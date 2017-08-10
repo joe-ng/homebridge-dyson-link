@@ -58,14 +58,14 @@ class DysonLinkAccessory {
     initFanState() {
         this.log("Init Fan State for " + this.displayName);
 
-        this.fan = this.getService(Service.Fan);        
+        this.fan = this.getService(Service.Fan);
 
         this.fan.getCharacteristic(Characteristic.On)
             .on("get", this.device.isFanOn.bind(this.device))
             .on("set", this.device.setFanOn.bind(this.device));
 
         this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
-        
+
         this.autoSwitch
             .getCharacteristic(Characteristic.On)
             .on("get", this.device.isFanAuto.bind(this.device))
@@ -77,35 +77,36 @@ class DysonLinkAccessory {
             .on("get", this.device.getFanSpeed.bind(this.device))
             .on("set", this.device.setFanSpeed.bind(this.device));
 
-        this.rotateSwitch = this.getServiceBySubtype(Service.Switch, "Rotation - " + this.displayName, "Rotate");   
-        
+        this.rotateSwitch = this.getServiceBySubtype(Service.Switch, "Rotation - " + this.displayName, "Rotate");
+
         this.rotateSwitch
             .getCharacteristic(Characteristic.On)
             .on("get", this.device.isRotate.bind(this.device))
             .on("set", this.device.setRotate.bind(this.device));
 
-        this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");   
-        
+        this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");
+
         this.nightModeSwitch
             .getCharacteristic(Characteristic.On)
             .on("get", this.device.isNightMode.bind(this.device))
             .on("set", this.device.setNightMode.bind(this.device));
 
-        this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");   
-        
-        this.focusSwitch
-            .getCharacteristic(Characteristic.On)
-            .on("get", this.device.isFocusedJet.bind(this.device))
-            .on("set", this.device.setFocusedJet.bind(this.device));
 
         // Set Heat 
         if (this.device.heatAvailable) {
-            this.log("Heat Available. Add Heat button");
-            this.heatSwitch = this.getServiceBySubtype(Service.Switch, "Heat - " + this.displayName, "Heat");   
+            this.log("Heat Available. Add Heat button and jet control");
+            this.heatSwitch = this.getServiceBySubtype(Service.Switch, "Heat - " + this.displayName, "Heat");
             this.heatSwitch
                 .getCharacteristic(Characteristic.On)
                 .on("get", this.device.isHeatOn.bind(this.device))
                 .on("set", this.device.setHeatOn.bind(this.device));
+
+            this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
+
+            this.focusSwitch
+                .getCharacteristic(Characteristic.On)
+                .on("get", this.device.isFocusedJet.bind(this.device))
+                .on("set", this.device.setFocusedJet.bind(this.device));
         }
 
         // this.device.mqttEvent.on(this.device.STATE_EVENT, () => {
@@ -121,17 +122,17 @@ class DysonLinkAccessory {
         // });
     }
 
-    getService(serviceType){
+    getService(serviceType) {
         let service = this.accessory.getService(serviceType);
-        if(!service) {
+        if (!service) {
             service = this.accessory.addService(serviceType, this.displayName);
         }
         return service;
     }
 
-    getServiceBySubtype(serviceType, displayName, subType){
-        let service = this.accessory.getServiceByUUIDAndSubType (serviceType, subType);
-        if(!service) {
+    getServiceBySubtype(serviceType, displayName, subType) {
+        let service = this.accessory.getServiceByUUIDAndSubType(serviceType, subType);
+        if (!service) {
             service = this.accessory.addService(serviceType, displayName, subType);
         }
 

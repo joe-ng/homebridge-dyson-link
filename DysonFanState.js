@@ -9,11 +9,11 @@ class DysonFanState {
         this._fan = newState["product-state"]["fmod"] === "FAN";
         this._auto = newState["product-state"]["fmod"] === "AUTO";
         this._rotate = newState["product-state"]["oson"] === "ON";
-        this._nightMode = newState["product-state"]["nmod"] === "ON";
-        this._focus = newState["product-state"]["ffoc"] === "ON";
+        this._nightMode = newState["product-state"]["nmod"] === "ON";        
         this._speed = Number.parseInt(newState["product-state"]["fnsp"]) * 10;
         if (this.heatAvailable) {
             this._heat = newState["product-state"]["hmod"] === "HEAT";
+            this._focus = newState["product-state"]["ffoc"] === "ON";
         }
         this._fanState = 0;
         if (this.auto) {
