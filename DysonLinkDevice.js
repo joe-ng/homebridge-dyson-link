@@ -46,7 +46,7 @@ class DysonLinkDevice {
 
             this.fanState = new DysonFanState(this.heatAvailable);
             this.environment = new DysonEnvironmentState(this.sensitivity);
-            this.log.info("Sensitivity: " + this.sensitivity);
+            this.log.info("Air Quality Sensitivity (Default is 1): " + this.sensitivity);
 
             this.mqttClient.on('connect', () => {
                 this.log.info("Connected to " + this._id + ". subscribe now");
