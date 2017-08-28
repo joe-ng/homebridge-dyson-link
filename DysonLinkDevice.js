@@ -12,8 +12,9 @@ class DysonLinkDevice {
     static get SENSOR_EVENT() { return "sensor-updated"; }
     static get STATE_EVENT() { return "state-updated"; }
 
-    constructor(displayName, ip, serialNumber, password, log) {
+    constructor(displayName, ip, serialNumber, password, log, sensitivity) {
         this.log = log;
+        this.sensitivity = sensitivity;
         this.displayName = displayName;
         let serialRegex = /DYSON-(\w{3}-\w{2}-\w{8})-(\w{3})/;
         let [, id, model] = serialNumber.match(serialRegex) || [];
@@ -44,7 +45,8 @@ class DysonLinkDevice {
             this.commandTopic = this._model + "/" + this._id + "/command";
 
             this.fanState = new DysonFanState(this.heatAvailable);
-            this.environment = new DysonEnvironmentState();
+            this.environment = new DysonEnvironmentState(this.sensitivity);
+            this.log.info("Sensitivity: " + this.sensitivity);
 
             this.mqttClient.on('connect', () => {
                 this.log.info("Connected to " + this._id + ". subscribe now");

@@ -42,7 +42,11 @@ class DysonPlatform {
                 platform.log("Finished launching. Start to create accessory from config");
                 this.config.accessories.forEach((accessory) => {
                     platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
-                    let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, accessory.password, platform.log);
+                    let sensitivity = accessory.sensitivity;
+                    if(!sensitivity) {
+                        sensitivity = 1.0;
+                    }
+                    let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, accessory.password, platform.log, sensitivity);
                     if (device.valid) {
                         platform.log("Device serial number format valids");
                         let uuid = UUIDGen.generate(accessory.serialNumber);

@@ -1,6 +1,7 @@
 class DysonEnvironmentState {
 
-    constructor() {
+    constructor(sensitivity) {
+        this.sensitivity = sensitivity;
 
     }
 
@@ -24,7 +25,7 @@ class DysonEnvironmentState {
             this._airQuality = 0;
         }
         else{
-            this._airQuality = Math.min(Math.max(Math.floor((dustValue + vocValue) / 2), 1), 5);
+            this._airQuality = Math.min(Math.max(Math.floor((dustValue + vocValue) / 2) * sensitivity, 1), 5);
         }
         this._humidity = Number.parseInt(newState.data.hact);
         // Reference: http://aakira.hatenablog.com/entry/2016/08/12/012654
