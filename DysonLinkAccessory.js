@@ -58,7 +58,12 @@ class DysonLinkAccessory {
     initFanState() {
         this.log("Init Fan State for " + this.displayName);
 
-        this.fan = this.getService(Service.Fanv2);
+        // Remove Fan V1 if it exists
+        var fanV1 = this.accessory.getService(Service.Fan);
+        if (fanV1) {
+            this.accessory.removeService(fanV1);
+        }
+        this.fan = this.getService(Service.Fanv2);        
 
         this.fan.getCharacteristic(Characteristic.Active)
             .on("get", this.device.isFanOn.bind(this.device))
