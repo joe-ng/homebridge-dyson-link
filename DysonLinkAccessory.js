@@ -58,12 +58,19 @@ class DysonLinkAccessory {
     initFanState() {
         this.log("Init Fan State for " + this.displayName);
 
-        // Remove Fan V1 if it exists
+        // Remove Fan V1 and rotate switch if it exists
         var fanV1 = this.accessory.getService(Service.Fan);
         if (fanV1) {
+            this.log("fan v1 found. Remove this now");
             this.accessory.removeService(fanV1);
         }
-        this.fan = this.getService(Service.Fanv2);        
+        var rotateSwitch = this.getServiceBySubtype(Service.Switch, "Rotation - " + this.displayName, "Rotate");
+        if(rotateSwitch) {
+            this.log("Rotate switch found. Remove this now");
+            this.accessory.removeService(rotateSwitch);
+        }
+
+        this.fan = this.getService(Service.Fanv2); 
 
         this.fan.getCharacteristic(Characteristic.Active)
             .on("get", this.device.isFanOn.bind(this.device))
@@ -78,14 +85,6 @@ class DysonLinkAccessory {
         this.fan.getCharacteristic(Characteristic.RotationSpeed)
             .on("get", this.device.getFanSpeed.bind(this.device))
             .on("set", this.device.setFanSpeed.bind(this.device));
-
-        // this.rotateSwitch = this.getServiceBySubtype(Service.Switch, "Rotation - " + this.displayName, "Rotate");
-
-        // this.rotateSwitch
-        //     .getCharacteristic(Characteristic.On)
-        //     .on("get", this.device.isRotate.bind(this.device))
-        //     .on("set", this.device.setRotate.bind(this.device));
-
         
         this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
         
