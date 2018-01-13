@@ -58,18 +58,15 @@ class DysonLinkAccessory {
     initFanState() {
         this.log("Init Fan State for " + this.displayName);
 
-        this.fan = this.getService(Service.Fan);
+        this.fan = this.getService(Service.Fanv2);
 
-        this.fan.getCharacteristic(Characteristic.On)
+        this.fan.getCharacteristic(Characteristic.Active)
             .on("get", this.device.isFanOn.bind(this.device))
             .on("set", this.device.setFanOn.bind(this.device));
-
-        this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
-
-        this.autoSwitch
-            .getCharacteristic(Characteristic.On)
-            .on("get", this.device.isFanAuto.bind(this.device))
-            .on("set", this.device.setFanAuto.bind(this.device));
+            
+        this.fan.getCharacteristic(Characteristic.SwingMode)
+            .on("get", this.device.isRotate.bind(this.device))
+            .on("set", this.device.setRotate.bind(this.device));
 
 
         // This is actually the fan speed instead of rotation speed but homekit fan does not support this
@@ -77,13 +74,22 @@ class DysonLinkAccessory {
             .on("get", this.device.getFanSpeed.bind(this.device))
             .on("set", this.device.setFanSpeed.bind(this.device));
 
-        this.rotateSwitch = this.getServiceBySubtype(Service.Switch, "Rotation - " + this.displayName, "Rotate");
+        // this.rotateSwitch = this.getServiceBySubtype(Service.Switch, "Rotation - " + this.displayName, "Rotate");
 
-        this.rotateSwitch
+        // this.rotateSwitch
+        //     .getCharacteristic(Characteristic.On)
+        //     .on("get", this.device.isRotate.bind(this.device))
+        //     .on("set", this.device.setRotate.bind(this.device));
+
+        
+        this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
+        
+        this.autoSwitch
             .getCharacteristic(Characteristic.On)
-            .on("get", this.device.isRotate.bind(this.device))
-            .on("set", this.device.setRotate.bind(this.device));
+            .on("get", this.device.isFanAuto.bind(this.device))
+            .on("set", this.device.setFanAuto.bind(this.device));
 
+                    
         this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");
 
         this.nightModeSwitch

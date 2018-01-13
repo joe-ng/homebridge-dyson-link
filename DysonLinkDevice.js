@@ -163,14 +163,14 @@ class DysonLinkDevice {
     }
 
     setRotate(value, callback) {
-        this.setState({ oson: value ? "ON" : "OFF" });
+        this.setState({ oson: value==1 ? "ON" : "OFF" });
         this.isRotate(callback);
     }
 
     isRotate(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan Rotate: " + this.fanState.fanRotate);
-            callback(null, this.fanState.fanRotate);
+            callback(null, this.fanState.fanRotate? 1:0);
         });
         // Request for udpate
         this.requestForCurrentUpdate();
@@ -191,14 +191,14 @@ class DysonLinkDevice {
     }
 
     setFanOn(value, callback) {
-        this.setState({ fmod: value ? "FAN" : "OFF" });
+        this.setState({ fmod: value==1 ? "FAN" : "OFF" });
         this.isFanOn(callback);
     }
 
     isFanOn(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan On: " + this.fanState.fanOn);
-            callback(null, this.fanState.fanOn);
+            callback(null, this.fanState.fanOn? 1:0);
         });
         // Request for udpate
         this.requestForCurrentUpdate();
