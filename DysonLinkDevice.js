@@ -205,14 +205,14 @@ class DysonLinkDevice {
     }
 
     setFanAuto(value, callback) {
-        this.setState({ fmod: value ? "AUTO" : "OFF" });
+        this.setState({ fmod: value==1 ? "AUTO" : "OFF" });
         this.isFanAuto(callback);
     }
 
     isFanAuto(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan Auto: " + this.fanState.fanAuto);
-            callback(null, this.fanState.fanAuto);
+            callback(null, this.fanState.fanAuto? 1:0);
         });
         // Request for udpate
         this.requestForCurrentUpdate();
