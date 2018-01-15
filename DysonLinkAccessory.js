@@ -69,6 +69,11 @@ class DysonLinkAccessory {
             this.log("Rotate switch found. Remove this now");
             this.accessory.removeService(rotateSwitch);
         }
+        var autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
+        if(autoSwitch) {
+            this.log("Auto switch found. Remove this now");
+            this.accessory.removeService(autoSwitch);
+        }
 
         this.fan = this.getService(Service.Fanv2); 
 
@@ -80,20 +85,15 @@ class DysonLinkAccessory {
             .on("get", this.device.isRotate.bind(this.device))
             .on("set", this.device.setRotate.bind(this.device));
 
+        this.fan.getCharacteristic(Characteristic.TargetFanState)
+            .on("get", this.device.isFanAuto.bind(this.device))
+            .on("set", this.device.setFanAuto.bind(this.device));
 
         // This is actually the fan speed instead of rotation speed but homekit fan does not support this
         this.fan.getCharacteristic(Characteristic.RotationSpeed)
             .on("get", this.device.getFanSpeed.bind(this.device))
-            .on("set", this.device.setFanSpeed.bind(this.device));
-        
-        this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
-        
-        this.autoSwitch
-            .getCharacteristic(Characteristic.On)
-            .on("get", this.device.isFanAuto.bind(this.device))
-            .on("set", this.device.setFanAuto.bind(this.device));
-
-                    
+            .on("set", this.device.setFanSpeed.bind(this.device));        
+                  
         this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");
 
         this.nightModeSwitch
