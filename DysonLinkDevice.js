@@ -205,7 +205,7 @@ class DysonLinkDevice {
     }
 
     setFanAuto(value, callback) {
-        this.setState({ fmod: value==1? "AUTO" : "OFF" });
+        this.setState({ fmod: value==1? "AUTO" : "FAN" });
         this.isFanAuto(callback);
     }
 

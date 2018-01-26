@@ -88,7 +88,8 @@ class DysonLinkAccessory {
         this.fan.getCharacteristic(Characteristic.TargetFanState)            
             .on("set", this.device.setFanAuto.bind(this.device));
         this.fan.getCharacteristic(Characteristic.CurrentFanState)
-            .on("get", this.device.isFanAuto.bind(this.device))
+            // .on("set", this.device.setFanAuto.bind(this.device))
+            .on("get", this.device.isFanAuto.bind(this.device));
 
         // this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
         
