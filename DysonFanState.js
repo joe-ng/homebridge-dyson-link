@@ -6,7 +6,7 @@ class DysonFanState {
     }
 
     updateState(newState) {
-        this._fan = newState["product-state"]["fmod"] === "FAN";
+        this._fan = newState["product-state"]["fmod"] === "FAN" || newState["product-state"]["fmod"] === "AUTO";
         this._auto = newState["product-state"]["fmod"] === "AUTO";
         this._rotate = newState["product-state"]["oson"] === "ON";
         this._nightMode = newState["product-state"]["nmod"] === "ON";        
