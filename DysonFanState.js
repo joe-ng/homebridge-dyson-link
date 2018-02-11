@@ -25,6 +25,11 @@ class DysonFanState {
         else if (this.heatAvailable && this.heat) {
             this._fanState = 1;
         }
+        // Assuming the max life is 12 * 365 = 4380 hrs
+        this._filterLife = Number.parseInt(newState["product-state"]["filf"]) * 100 / 4380;
+        // Set to chang the filter when the life is below 10%
+        this._filterChange = this._filterLife <10 ;
+
     }
 
     get fanOn() { return this._fan; }
@@ -35,6 +40,8 @@ class DysonFanState {
     get fanState() {return this._fanState;}
     get nightMode() {return this._nightMode;}
     get fanFocused() {return this._focus;}
+    get filterLife() {return this._filterLife;}
+    get filterChangeRequired() {return this._filterChange;}
 
 }
 

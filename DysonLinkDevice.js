@@ -78,7 +78,7 @@ class DysonLinkDevice {
         // Only do this when we have less than one listener to avoid multiple call        
         let senorlisternerCount = this.environmentEvent.listenerCount(this.SENSOR_EVENT);
         let fanlisternerCount = this.mqttEvent.listenerCount(this.STATE_EVENT);
-        this.log.debug("Number of listeners: "+ senorlisternerCount + " " + fanlisternerCount);
+        this.log.debug("Number of listeners - sensor:"+ senorlisternerCount + " fan:" + fanlisternerCount);
         if(senorlisternerCount <=1 && fanlisternerCount <=1) {
             this.log("Request for current state update");
             this.mqttClient.publish(this.commandTopic, '{"msg":"REQUEST-CURRENT-STATE"}');
@@ -129,6 +129,27 @@ class DysonLinkDevice {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan Speed:" + this.fanState.fanSpeed);
             callback(null, this.fanState.fanSpeed);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+
+    getFilterLife(callback) {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Filter Life(%):" + this.fanState.filterLife);
+            callback(null, this.fanState.filterLife);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+
+    getFilterChange(callback) {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Filter Change Required:" + this.fanState.filterChangeRequired);
+            // The value property of FilterChangeIndication must be one of the following:
+            // Characteristic.FilterChangeIndication.FILTER_OK = 0;
+            // Characteristic.FilterChangeIndication.CHANGE_FILTER = 1;
+            callback(null, this.fanState.filterChangeRequired? 1 :0);
         });
         // Request for udpate
         this.requestForCurrentUpdate();

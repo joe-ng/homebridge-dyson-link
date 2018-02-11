@@ -24,16 +24,14 @@ class DysonLinkAccessory {
         this.initFanState();
     }
 
-    updateFanState() {
-        this.fan.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanOn);
-        this.rotateSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanRotate);
-        this.autoSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanAuto);
-        this.nightModeSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.nightMode);
+    // updateFanState() {
+    //     this.fan.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanOn);        
+    //     this.autoSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanAuto);        
 
-        if (this.device.heatAvailable) {
-            this.heatSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanHeat);
-        }
-    }
+    //     if (this.device.heatAvailable) {
+    //         this.heatSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanHeat);
+    //     }
+    // }
 
     initSensor() {
         this.log("Init Sensor for " + this.displayName);
@@ -90,14 +88,7 @@ class DysonLinkAccessory {
             .on("set", this.device.setFanAuto.bind(this.device));
         this.fan.getCharacteristic(Characteristic.CurrentFanState)
             .on("set", this.device.setFanAuto.bind(this.device))
-            .on("get", this.device.isFanAuto.bind(this.device));
-
-        // this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
-        
-        // this.autoSwitch
-        //     .getCharacteristic(Characteristic.On)
-        //     .on("get", this.device.isFanAuto.bind(this.device))
-        //     .on("set", this.device.setFanAuto.bind(this.device));
+            .on("get", this.device.isFanAuto.bind(this.device));     
 
         // This is actually the fan speed instead of rotation speed but homekit fan does not support this
         this.fan.getCharacteristic(Characteristic.RotationSpeed)
@@ -111,6 +102,17 @@ class DysonLinkAccessory {
             .on("get", this.device.isNightMode.bind(this.device))
             .on("set", this.device.setNightMode.bind(this.device));
 
+        // Create FilterMaintenance 
+        this.filter = this.getService(Service.FilterMaintenance);
+        this.filter.getCharacteristic(Characteristic.FilterChangeIndication)
+            .on("get", this.device.getFilterChange.bind(this.device));
+        this.filter.getCharacteristic(Characteristic.FilterLifeLevel)
+            .on("get", this.device.getFilterLife.bind(this.device));
+        // Add this to fan too
+        this.fan.getCharacteristic(Characteristic.FilterChangeIndication)
+            .on("get", this.device.getFilterChange.bind(this.device));
+        this.fan.getCharacteristic(Characteristic.FilterLifeLevel)
+            .on("get", this.device.getFilterLife.bind(this.device));
 
         // Set Heat 
         if (this.device.heatAvailable) {
