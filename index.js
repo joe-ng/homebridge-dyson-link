@@ -40,33 +40,36 @@ class DysonPlatform {
             this.api.on('didFinishLaunching',  () => {
 
                 platform.log("Finished launching. Start to create accessory from config");
-                this.config.accessories.forEach((accessory) => {
-                    platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
-                    let sensitivity = accessory.sensitivity;
-                    if(!sensitivity) {
-                        sensitivity = 1.0;
-                    }
-                    let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, accessory.password, platform.log, sensitivity);
-                    if (device.valid) {
-                        platform.log("Device serial number format valids");
-                        let uuid = UUIDGen.generate(accessory.serialNumber);
-                        // Check if the accessory got cached
-                        let cachedAccessory = platform.accessories.find((item) => item.UUID === uuid);
-                        if (!cachedAccessory) {
-                            platform.log("Device not cached. Create a new one");
-                            let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                            new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log);
-                            platform.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
-                            platform.accessories.push(accessory);
+                // Check if the accessories is null as this may be called from second instance of homebrdige too
+                if(this.config && this.config.accessories){
+                    this.config.accessories.forEach((accessory) => {
+                        platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
+                        let sensitivity = accessory.sensitivity;
+                        if(!sensitivity) {
+                            sensitivity = 1.0;
                         }
-                        else {
-                            platform.log("Device cached. Try to update this");
-                            cachedAccessory.displayName = accessory.displayName;                  
-                            new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log);
-                            platform.api.updatePlatformAccessories([cachedAccessory]);                            
+                        let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, accessory.password, platform.log, sensitivity);
+                        if (device.valid) {
+                            platform.log("Device serial number format valids");
+                            let uuid = UUIDGen.generate(accessory.serialNumber);
+                            // Check if the accessory got cached
+                            let cachedAccessory = platform.accessories.find((item) => item.UUID === uuid);
+                            if (!cachedAccessory) {
+                                platform.log("Device not cached. Create a new one");
+                                let dysonAccessory = new Accessory(accessory.displayName, uuid);
+                                new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log);
+                                platform.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
+                                platform.accessories.push(accessory);
+                            }
+                            else {
+                                platform.log("Device cached. Try to update this");
+                                cachedAccessory.displayName = accessory.displayName;                  
+                                new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log);
+                                platform.api.updatePlatformAccessories([cachedAccessory]);                            
+                            }
                         }
-                    }
-                });
+                    });
+                }
             });
         }
        
