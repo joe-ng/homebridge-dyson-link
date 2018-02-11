@@ -117,11 +117,39 @@ class DysonLinkAccessory {
         // Set Heat 
         if (this.device.heatAvailable) {
             this.log("Heat Available. Add Heat button and jet control");
-            this.heatSwitch = this.getServiceBySubtype(Service.Switch, "Heat - " + this.displayName, "Heat");
-            this.heatSwitch
-                .getCharacteristic(Characteristic.On)
-                .on("get", this.device.isHeatOn.bind(this.device))
-                .on("set", this.device.setHeatOn.bind(this.device));
+            this.heater = this.getService(Service.HeaterCooler);
+
+            this.heater.getCharacteristic(Characteristic.Active)
+                .on("get", this.device.isFanOn.bind(this.device))
+                .on("set", this.device.setHeaterOn.bind(this.device));
+
+            this.heater.getCharacteristic(Characteristic.CurrentHeaterCoolerState)
+                .on("set", this.device.setCurrentHeaterCoolerState.bind(this.device))
+                .on("get", this.device.getCurrentHeaterCoolerState.bind(this.device));
+            
+
+            this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+                .on("get", this.device.getHeaterCoolerState.bind(this.device))
+                .on("set", this.device.setHeaterCoolerState.bind(this.device));
+
+            this.heater.getCharacteristic(Characteristic.CurrentTemperature)
+                .on("get", this.device.getTemperture.bind(this.device));
+
+            this.heater.getCharacteristic(Characteristic.HeatingThresholdTemperature)
+                .on("set", this.device.setThresholdTemperture.bind(this.device))
+                .on("get", this.device.getThresholdTemperture.bind(this.device))
+                .setProps({ minValue: 30, maxValue: 38, unit: "celsius" })
+
+            var heatSwitch = this.accessory.getServiceByUUIDAndSubType(Service.Switch, "Heat");
+            if(heatSwitch) {
+                this.log("Heat switch found. Remove this now and replace with heater");
+                this.accessory.removeService(heatSwitch);
+            }
+            // this.heatSwitch = this.getServiceBySubtype(Service.Switch, "Heat - " + this.displayName, "Heat");
+            // this.heatSwitch
+            //     .getCharacteristic(Characteristic.On)
+            //     .on("get", this.device.isHeatOn.bind(this.device))
+            //     .on("set", this.device.setHeatOn.bind(this.device));
 
             this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
 

@@ -34,6 +34,8 @@ class DysonLinkDevice {
         if (this.valid) {
 
             this.mqttEvent = new EventEmitter();
+            // There can be 11 listeners for this at the same time
+            this.mqttEvent.setMaxListeners(15);
             this.environmentEvent = new EventEmitter();
 
             this.mqttClient = mqtt.connect("mqtt://" + this._ip, {
@@ -92,7 +94,58 @@ class DysonLinkDevice {
         this.mqttClient.publish(this.commandTopic, JSON.stringify(message));
     }
 
+    // The value property of TargetHeaterCoolerState must be one of the following:
+    // Characteristic.TargetHeaterCoolerState.AUTO = 0;
+    // Characteristic.TargetHeaterCoolerState.HEAT = 1;
+    // Characteristic.TargetHeaterCoolerState.COOL = 2;
+    setHeaterCoolerState(value, callback) {
+        this.log.debug(this.displayName + " - Set target heater cooler state: " + value);
+        switch (value) {
+            case 0:
+                this.setState({ fmod: "AUTO" });
+                break;
+            case 1:
+                this.setState({ hmod: "HEAT" });
+                break;
+            case 2:
+                this.setState({ fmod: "FAN" });
+                this.setState({ hmod: "OFF" });
+                break;
+        }
+        this.getHeaterCoolerState(callback);
+    }
 
+    getHeaterCoolerState(callback) {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Target Heater Cooler State:" + this.fanState.targetHeaterCoolerState);
+            callback(null, this.fanState.targetHeaterCoolerState);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+
+    
+    setCurrentHeaterCoolerState(value, callback) {
+        this.log.debug(this.displayName + " - Set current heater cooler state: " + value);
+        this.getCurrentHeaterCoolerState(callback);
+    }
+
+    getCurrentHeaterCoolerState(callback) {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Heater Cooler State:" + this.fanState.heaterCoolerState);
+            callback(null, this.fanState.heaterCoolerState);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+  
+    setHeaterOn(value, callback) {        
+        this.setState({ fmod: value==1 ? "FAN" : "OFF" });
+        if(value && this.fanState.heaterCoolerState == 2) {
+
+        }
+        this.isFanOn(callback);
+    }
 
     setFanState(value, callback) {
         switch (value) {
@@ -111,6 +164,21 @@ class DysonLinkDevice {
         }
 
     }
+
+    setThresholdTemperture(value, callback) {
+        this.setState({hmax: (value + 273)*10 });
+        this.getThresholdTemperture(callback);
+
+    }
+    getThresholdTemperture(callback) {
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Heat Threshold:" + this.fanState.heatThreshold);
+            callback(null, this.fanState.heatThreshold);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+
     getFanState(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan State:" + this.fanState.fanState);
