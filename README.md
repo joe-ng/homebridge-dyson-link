@@ -54,4 +54,4 @@ The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters)
 * Night Mode On/Off
 * Jet Focus On/Off
 * Heat On/Off and target tempeture (If your device supports this)
-* Display fitler life
+* Display filter life
