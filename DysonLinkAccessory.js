@@ -138,7 +138,7 @@ class DysonLinkAccessory {
             this.heater.getCharacteristic(Characteristic.HeatingThresholdTemperature)
                 .on("set", this.device.setThresholdTemperture.bind(this.device))
                 .on("get", this.device.getThresholdTemperture.bind(this.device))
-                .setProps({ minValue: 30, maxValue: 38, unit: "celsius" })
+                .setProps({ minValue: 1, maxValue: 38, unit: "celsius" })
 
             var heatSwitch = this.accessory.getServiceByUUIDAndSubType(Service.Switch, "Heat");
             if(heatSwitch) {
