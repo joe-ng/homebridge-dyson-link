@@ -17,7 +17,7 @@ See config-sample.json for example
 
 We will need to input the IP, display name, serial number and password to the config
 
-The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters) of your device can be found on the device and the manual.
+The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters) of your device can be found on the device and the manual. The serial number here is the same as the SSID of your Dyson wifi and the password is the wifi password. 
 
 ```
 "platforms": [
