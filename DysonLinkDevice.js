@@ -258,7 +258,7 @@ class DysonLinkDevice {
     setRotate(value, callback) {
         // If the fan is not on, wait for 500ms before setting that
         if(!this.fanState.isFanOn && !this.fanState.isHeatOn){
-            sleep(500).then(() => {
+            this.sleep(500).then(() => {
                 this.setState({ oson: value==1 ? "ON" : "OFF" });
                 this.isRotate(callback);
             });
