@@ -83,12 +83,12 @@ class DysonLinkAccessory {
             .on("get", this.device.isRotate.bind(this.device))
             .on("set", this.device.setRotate.bind(this.device));
 
-        this.fan.getCharacteristic(Characteristic.TargetFanState)
-            .on("get", this.device.isFanAuto.bind(this.device))
-            .on("set", this.device.setFanAuto.bind(this.device));
-        this.fan.getCharacteristic(Characteristic.CurrentFanState)
-            .on("set", this.device.setFanAuto.bind(this.device))
-            .on("get", this.device.isFanAuto.bind(this.device));     
+
+
+        // Don't seem to be called by homekit at all
+        // this.fan.getCharacteristic(Characteristic.CurrentFanState)
+        //     .on("set", this.device.setCurrentFanState.bind(this.device))
+        //     .on("get", this.device.getCurrentFanState.bind(this.device));     
 
         // This is actually the fan speed instead of rotation speed but homekit fan does not support this
         this.fan.getCharacteristic(Characteristic.RotationSpeed)
@@ -157,6 +157,22 @@ class DysonLinkAccessory {
                 .getCharacteristic(Characteristic.On)
                 .on("get", this.device.isFocusedJet.bind(this.device))
                 .on("set", this.device.setFocusedJet.bind(this.device));
+            
+            
+            this.fan.getCharacteristic(Characteristic.TargetFanState)
+                .setValue(0)
+                .on("get", this.device.isFanAuto.bind(this.device))
+                .on("set", this.device.setFanAuto.bind(this.device));
+        }
+        else{
+
+            this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
+            
+            this.autoSwitch
+                .getCharacteristic(Characteristic.On)
+                .on("get", this.device.isFanAuto.bind(this.device))
+                .on("set", this.device.setFanAuto.bind(this.device));
+            
         }
 
         // this.device.mqttEvent.on(this.device.STATE_EVENT, () => {

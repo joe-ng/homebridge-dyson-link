@@ -60,12 +60,12 @@ class DysonLinkDevice {
                 let result = JSON.parse(message);
                 switch (result.msg) {
                     case "ENVIRONMENTAL-CURRENT-SENSOR-DATA":
-                        this.log.info("Update sensor data");
+                        this.log.info("Update sensor data from ENVIRONMENTAL-CURRENT_SENORT-DATA - " + this.displayName);
                         this.environment.updateState(result);
                         this.environmentEvent.emit(this.SENSOR_EVENT);
                         break;
                     case "CURRENT-STATE":
-                        this.log.info("Update fan data");
+                        this.log.info("Update fan data from CURREN-STATE - " + this.displayName);
                         this.fanState.updateState(result);
                         this.mqttEvent.emit(this.STATE_EVENT);
                         break;
@@ -251,7 +251,18 @@ class DysonLinkDevice {
         this.requestForCurrentUpdate();
     }
 
+    sleep(ms){
+        return new Promise(resolve => setTimeout(resolve,ms));
+    }
+
     setRotate(value, callback) {
+        // If the fan is not on, wait for 500ms before setting that
+        if(!this.fanState.isFanOn && !this.fanState.isHeatOn){
+            sleep(500).then(() => {
+                this.setState({ oson: value==1 ? "ON" : "OFF" });
+                this.isRotate(callback);
+            });
+        }
         this.setState({ oson: value==1 ? "ON" : "OFF" });
         this.isRotate(callback);
     }
@@ -280,7 +291,10 @@ class DysonLinkDevice {
     }
 
     setFanOn(value, callback) {
-        this.setState({ fmod: value==1 ? "FAN" : "OFF" });
+        // Do not set the fmod to FAN if the fan is set to AUTO already
+        if(!this.fanState.fanAuto || value!= 1){
+            this.setState({ fmod: value==1 ? "FAN" : "OFF" });
+        }
         this.isFanOn(callback);
     }
 
@@ -293,7 +307,27 @@ class DysonLinkDevice {
         this.requestForCurrentUpdate();
     }
 
+    setCurrentFanState(value, callback) {
+        this.log.debug(this.displayName + " Set Current Fan Auto State according to target fan state: " + value);
+        //this.setState({ fmod: value==1? "AUTO" : "FAN" });
+        this.getCurrentFanState(callback);
+    }
+    //// The value property of CurrentFanState must be one of the following:
+    // Characteristic.CurrentFanState.INACTIVE = 0;
+    // Characteristic.CurrentFanState.IDLE = 1;
+    // Characteristic.CurrentFanState.BLOWING_AIR = 2;
+    getCurrentFanState(callback){
+
+        this.mqttEvent.once(this.STATE_EVENT, () => {
+            this.log.info(this.displayName + " - Current Fan State: " + this.fanState.fanOn);
+            callback(null, this.fanState.fanOn? 2:0);
+        });
+        // Request for udpate
+        this.requestForCurrentUpdate();
+    }
+
     setFanAuto(value, callback) {
+        this.log.debug(this.displayName + " Set Fan Auto State according to target fan state: " + value);
         this.setState({ fmod: value==1? "AUTO" : "FAN" });
         this.isFanAuto(callback);
     }
@@ -301,6 +335,8 @@ class DysonLinkDevice {
     isFanAuto(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
             this.log.info(this.displayName + " - Fan Auto: " + this.fanState.fanAuto);
+            var fanValue = this.fanState.fanAuto? 1:0;
+            this.log.debug("Return target fan value as " +fanValue);
             callback(null, this.fanState.fanAuto? 1:0);
         });
         // Request for udpate
