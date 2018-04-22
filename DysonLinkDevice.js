@@ -60,12 +60,12 @@ class DysonLinkDevice {
                 let result = JSON.parse(message);
                 switch (result.msg) {
                     case "ENVIRONMENTAL-CURRENT-SENSOR-DATA":
-                        this.log.info("Update sensor data from ENVIRONMENTAL-CURRENT_SENORT-DATA - " + this.displayName);
+                        this.log.info("Update sensor data from ENVIRONMENTAL-CURRENT-SENORT-DATA - " + this.displayName);
                         this.environment.updateState(result);
                         this.environmentEvent.emit(this.SENSOR_EVENT);
                         break;
                     case "CURRENT-STATE":
-                        this.log.info("Update fan data from CURREN-STATE - " + this.displayName);
+                        this.log.info("Update fan data from CURRENT-STATE - " + this.displayName);
                         this.fanState.updateState(result);
                         this.mqttEvent.emit(this.STATE_EVENT);
                         break;
@@ -258,6 +258,7 @@ class DysonLinkDevice {
     setRotate(value, callback) {
         // If the fan is not on, wait for 500ms before setting that
         if(!this.fanState.isFanOn && !this.fanState.isHeatOn){
+            this.log.info(this.displayName + " fan is not on, try to wait for 500ms before setting oson");
             this.sleep(500).then(() => {
                 this.setState({ oson: value==1 ? "ON" : "OFF" });
                 this.isRotate(callback);
@@ -294,6 +295,22 @@ class DysonLinkDevice {
         // Do not set the fmod to FAN if the fan is set to AUTO already
         if(!this.fanState.fanAuto || value!= 1){
             this.setState({ fmod: value==1 ? "FAN" : "OFF" });
+            // Try to set the fan status according to the value in the home app
+            if(value ==1) {
+                if(this.accessory.getFanSpeedValue() >0) {
+                    this.log.info(this.displayName + " Try to restore the fan speed state from home app to " + this.accessory.getFanSpeedValue());
+                    this.setState({ fnsp: Math.round(this.accessory.getFanSpeedValue() / 10) });
+                }
+                if(this.accessory.isSwingModeButtonOn()) {
+                    this.log.info(this.displayName + " Try to restore the fan swing state from home app");
+                    this.setState({ oson: "ON" });
+                }
+                if(this.accessory.isNightModeSwitchOn()) {
+                    this.log.info(this.displayName + " Try to restore the night mode state from home app");
+                    this.setState({ nmod: "ON" });
+                }
+
+            }
         }
         this.isFanOn(callback);
     }
@@ -403,6 +420,8 @@ class DysonLinkDevice {
 
     get valid() { return this._valid; }
     get heatAvailable() { return this._model === "455"; }
+    get accessory() { return this._accessory ;}
+    set accessory(acce) { this._accessory = acce; }
 }
 
 module.exports = { DysonLinkDevice };

@@ -16,6 +16,8 @@ class DysonLinkAccessory {
 
 
         this.device = device;
+        this.device.accessory = this;
+
         this.accessory = accessory;
         this.log = log;
         this.displayName = displayName;
@@ -205,6 +207,19 @@ class DysonLinkAccessory {
         return service;
     }
 
+    isSwingModeButtonOn(){
+        return this.fan.getCharacteristic(Characteristic.SwingMode).value;
+
+    }
+
+    getFanSpeedValue(){
+        return this.fan.getCharacteristic(Characteristic.RotationSpeed).value;
+    }
+
+
+    isNightModeSwitchOn(){
+        return this.nightModeSwitch.getCharacteristic(Characteristic.On).value;
+    }
 }
 
 
