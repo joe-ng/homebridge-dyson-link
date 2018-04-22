@@ -264,8 +264,10 @@ class DysonLinkDevice {
                 this.isRotate(callback);
             });
         }
-        this.setState({ oson: value==1 ? "ON" : "OFF" });
-        this.isRotate(callback);
+        else {
+            this.setState({ oson: value==1 ? "ON" : "OFF" });
+            this.isRotate(callback);
+        }
     }
 
     isRotate(callback) {
