@@ -19,8 +19,8 @@ class DysonEnvironmentState {
         Characteristic.AirQuality.POOR = 5;
         */
         // Current calculation = (dust value + voc value) /2 and cap that between 1 to 5
-        let dustValue = Number.parseInt(newState.data.pact);
-        let vocValue = Number.parseInt(newState.data.vact);
+        let dustValue = Number.parseInt(newState.data.pact || newState.data.pm10);
+        let vocValue = Number.parseInt(newState.data.vact || newState.data.va10);
         if(dustValue == NaN || vocValue == NaN){
             this._airQuality = 0;
         }

@@ -6,11 +6,16 @@ class DysonFanState {
     }
 
     updateState(newState) {
-        this._fan = newState["product-state"]["fmod"] === "FAN" || newState["product-state"]["fmod"] === "AUTO";
-        this._auto = newState["product-state"]["fmod"] === "AUTO";
+        this._fan = newState["product-state"]["fmod"] === "FAN" ||
+                    newState["product-state"]["fmod"] === "AUTO" ||
+                    newState["product-state"]["fpwr"] === "ON" ;
+
+        this._auto = newState["product-state"]["fmod"] === "AUTO" ||
+                    (newState["product-state"]["auto"] === "ON" && this._fan);
+
         this._rotate = newState["product-state"]["oson"] === "ON";
         this._nightMode = newState["product-state"]["nmod"] === "ON";        
-        this._speed = Number.parseInt(newState["product-state"]["fnsp"]) * 10;
+        this._speed = (Number.parseInt(newState["product-state"]["fnsp"])||5) * 10;
         if (this.heatAvailable) {
             this._heat = newState["product-state"]["hmod"] === "HEAT";
             this._focus = newState["product-state"]["ffoc"] === "ON";
@@ -26,8 +31,11 @@ class DysonFanState {
         // else if (this.heatAvailable && this._heat) {
         //     this._fanState = 1;
         // }
+        // With TP04 models average cflr and hflr
+        let filterReading = newState["product-state"]["filf"] ||
+            (newState["product-state"]["cflr"] + newState["product-state"]["cflr"])/2;
         // Assuming the max life is 12 * 365 = 4380 hrs
-        this._filterLife = Number.parseInt(newState["product-state"]["filf"]) * 100 / 4380;
+        this._filterLife = Number.parseInt(filterReading) * 100 / 4380;
         // Set to chang the filter when the life is below 10%
         this._filterChange = this._filterLife <10 ;
 
@@ -36,11 +44,12 @@ class DysonFanState {
         // Characteristic.CurrentHeaterCoolerState.IDLE = 1;
         // Characteristic.CurrentHeaterCoolerState.HEATING = 2;
         // Characteristic.CurrentHeaterCoolerState.COOLING = 3;
-        switch( newState["product-state"]["fmod"]){
+        switch(newState["product-state"]["fmod"]||newState["product-state"]["fpwr"]){
             case "OFF":
                 this._currentHeaterCoolerState = 0;
                 break;
-            case "AUTO":            
+            case "AUTO":
+            case "ON":
             case "FAN":
                 this._currentHeaterCoolerState = 3;
                 break;
