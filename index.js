@@ -53,6 +53,14 @@ class DysonPlatform {
                             if (!sensitivity) {
                                 sensitivity = 1.0;
                             }
+                            let nightModeVisible = accessory.nightModeVisible;
+                            if(!nightModeVisible) {
+                                nightModeVisible = true;
+                            }
+                            let focusModeVisible = accessory.focusModeVisible;
+                            if(!focusModeVisible) {
+                                focusModeVisible = true;
+                            }
                             let deviceInfo = accountDevices[accessory.serialNumber];
                             var password = ''
                             if (deviceInfo) {
@@ -62,7 +70,8 @@ class DysonPlatform {
                             else {
                                 password = crypto.createHash('sha512').update(accessory.password, "utf8").digest("base64");
                             }
-                            let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, password, platform.log, sensitivity);
+                            let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, password, 
+                                platform.log, sensitivity);
                             if (device.valid) {
                                 platform.log("Device serial number format valids");
                                 let uuid = UUIDGen.generate(accessory.serialNumber);
@@ -71,13 +80,13 @@ class DysonPlatform {
                                 if (!cachedAccessory) {
                                     platform.log("Device not cached. Create a new one");
                                     let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                                    new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log);
+                                    new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log, nightModeVisible, focusModeVisible);
                                     platform.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
                                     platform.accessories.push(accessory);
                                 } else {
                                     platform.log("Device cached. Try to update this");
                                     cachedAccessory.displayName = accessory.displayName;
-                                    new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log);
+                                    new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log, nightModeVisible, focusModeVisible);
                                     platform.api.updatePlatformAccessories([cachedAccessory]);
                                 }
                             }

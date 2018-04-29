@@ -74,6 +74,42 @@ For newer models, (like TP04/DP04), authentication is enabled by using a Dyson a
   ],
 ```
 
+There are a few optional parameters for each accessory, E.g.
+
+"accessories": [
+        {
+          "ip": "ip of your device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "XXX-XX-XXXXXXXX",
+          // No device password needed if TP04 or DP04
+
+          // Air quality sensitivity - This is default to 1
+          "sensitivity" : 1,
+
+          // This controls the visibility of Night Mode button, default to true
+          "nightModeVisible" : true,
+
+          // This controls the visibility of Jet Focus button, default to true
+          "focusModeVisible" : true
+
+        },
+        {
+          "ip": "ip of your second device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
+          "password": "password of your second device"
+          // Password may be used with other models
+
+          // Air quality sensitivity - This is default to 1
+          "sensitivity" : 1,
+
+          // This controls the visibility of Night Mode button, default to true
+          "nightModeVisible" : true,
+
+          // This controls the visibility of Jet Focus button, default to true
+          "focusModeVisible" : true
+        }
+      ]
 
 ## Features Supported
 

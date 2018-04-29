@@ -12,7 +12,7 @@ function setHomebridge(homebridge) {
 }
 
 class DysonLinkAccessory {
-    constructor(displayName, device, accessory, log) {
+    constructor(displayName, device, accessory, log, nightModeVisible, focusModeVisible) {
 
 
         this.device = device;
@@ -21,6 +21,9 @@ class DysonLinkAccessory {
         this.accessory = accessory;
         this.log = log;
         this.displayName = displayName;
+
+        this.nightModeVisible = nightModeVisible;
+        this.focusModeVisible = focusModeVisible;
 
         this.initSensor();
         this.initFanState();
@@ -96,13 +99,23 @@ class DysonLinkAccessory {
         this.fan.getCharacteristic(Characteristic.RotationSpeed)
             .on("get", this.device.getFanSpeed.bind(this.device))
             .on("set", this.device.setFanSpeed.bind(this.device));        
-                  
-        this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");
 
-        this.nightModeSwitch
-            .getCharacteristic(Characteristic.On)
-            .on("get", this.device.isNightMode.bind(this.device))
-            .on("set", this.device.setNightMode.bind(this.device));
+        if(this.nightModeVisible) {
+            this.log.info("Night mode button is added");
+            this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");
+
+            this.nightModeSwitch
+                .getCharacteristic(Characteristic.On)
+                .on("get", this.device.isNightMode.bind(this.device))
+                .on("set", this.device.setNightMode.bind(this.device));
+        }
+        else {
+            this.log.info("Night mode button is hidden");
+            let nightSwtich = this.accessory.getServiceByUUIDAndSubType(Service.Switch, "Night Mode");
+            if(nightSwtich){
+                this.accessory.removeService(nightSwtich);
+            }
+        }
 
         // Create FilterMaintenance 
         this.filter = this.getService(Service.FilterMaintenance);
@@ -153,12 +166,24 @@ class DysonLinkAccessory {
             //     .on("get", this.device.isHeatOn.bind(this.device))
             //     .on("set", this.device.setHeatOn.bind(this.device));
 
-            this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
+            if(this.focusModeVisible) {
+                this.log.info("Jet Focus mode button is added");
+                this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
+                
+                this.focusSwitch
+                    .getCharacteristic(Characteristic.On)
+                    .on("get", this.device.isFocusedJet.bind(this.device))
+                    .on("set", this.device.setFocusedJet.bind(this.device));
 
-            this.focusSwitch
-                .getCharacteristic(Characteristic.On)
-                .on("get", this.device.isFocusedJet.bind(this.device))
-                .on("set", this.device.setFocusedJet.bind(this.device));
+            }
+            else {
+                this.log.info("Jet Focus mode button is hidden");
+                let focusSwtich = this.accessory.getServiceByUUIDAndSubType(Service.Switch, "Jet Focus");
+                if(focusSwtich){
+                    this.accessory.removeService(focusSwtich);
+                }
+            }
+            
             
             // Set the auto/manual mode in the FanV2 just for Cool/Heat device as it seemed to be problem for cool device
             this.fan.getCharacteristic(Characteristic.TargetFanState)
@@ -182,18 +207,6 @@ class DysonLinkAccessory {
                 .on("set", this.device.setFanAuto.bind(this.device));
             
         }
-
-        // this.device.mqttEvent.on(this.device.STATE_EVENT, () => {
-        //     this.log(this.displayName + " - Fan State changed. Update the UI on Home app");
-        //     this.fan.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanOn);
-        //     this.rotateSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanRotate);
-        //     this.autoSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanAuto);
-        //     this.nightModeSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.nightMode);
-
-        //     if (this.device.heatAvailable) {
-        //         this.heatSwitch.getCharacteristic(Characteristic.On).updateValue(this.device.fanState.fanHeat);
-        //     }
-        // });
     }
 
     getService(serviceType) {
