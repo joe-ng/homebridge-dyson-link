@@ -45,6 +45,36 @@ The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters)
   ],
 ```
 
+For newer models, (like TP04/DP04), authentication is enabled by using a Dyson account registered with the device. Add email, password to the platform configuration or set the environment variables DYSON_EMAIL and DYSON_PASSWORD. For example:
+```
+"platforms": [
+    // This is the config for this plugin  
+    {
+      "platform": "DysonPlatform",
+      "name": "DysonPlatform",
+      "email": "dysonuser@dyson.com", // or set DYSON_EMAIL="email"
+      "password": "password",         // or set DYSON_PASSWORD="password"
+      "country": "US"                 // be sure to change if not US
+      "accessories": [
+        {
+          "ip": "ip of your device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "XXX-XX-XXXXXXXX",
+          // No device password needed if TP04 or DP04
+        },
+        {
+          "ip": "ip of your second device",
+          "displayName": "Name to be shown on Home App",
+          "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
+          "password": "password of your second device"
+          // Password may be used with other models
+        }
+      ]
+    }
+  ],
+```
+
+
 ## Features Supported
 
 * Fan On/Off
