@@ -42,7 +42,7 @@ class DysonLinkDevice {
                 username: this._id,
                 password: this._password
             }
-            if (this._model === '438') {
+            if (this._model === '438' || this._model === '520') {
                 mqttClientOptions.protocolVersion = 3;
                 mqttClientOptions.protocolId = 'MQIsdp';
             }
@@ -86,7 +86,7 @@ class DysonLinkDevice {
 
 
     requestForCurrentUpdate() {
-        // Only do this when we have less than one listener to avoid multiple call        
+        // Only do this when we have less than one listener to avoid multiple call
         let senorlisternerCount = this.environmentEvent.listenerCount(this.SENSOR_EVENT);
         let fanlisternerCount = this.mqttEvent.listenerCount(this.STATE_EVENT);
         this.log.debug("Number of listeners - sensor:"+ senorlisternerCount + " fan:" + fanlisternerCount);
@@ -137,7 +137,7 @@ class DysonLinkDevice {
         this.requestForCurrentUpdate();
     }
 
-    
+
     setCurrentHeaterCoolerState(value, callback) {
         this.log.debug(this.displayName + " - Set current heater cooler state: " + value);
         this.getCurrentHeaterCoolerState(callback);
@@ -151,8 +151,8 @@ class DysonLinkDevice {
         // Request for update
         this.requestForCurrentUpdate();
     }
-  
-    setHeaterOn(value, callback) {        
+
+    setHeaterOn(value, callback) {
         this.setState({ fmod: value==1 ? "FAN" : "OFF" });
         if(value && this.fanState.heaterCoolerState == 2) {
 
@@ -309,7 +309,7 @@ class DysonLinkDevice {
     setFanOn(value, callback) {
         // Do not set the fmod to FAN if the fan is set to AUTO already
         if(!this.fanState.fanAuto || value!= 1){
-            if (this._model === '438') {
+            if (this._model === '438' || this._model === '520') {
                 this.setState({fpwr: value==1 ? "ON" : "OFF"})
             }
             else {
@@ -365,7 +365,7 @@ class DysonLinkDevice {
 
     setFanAuto(value, callback) {
         this.log.debug(this.displayName + " Set Fan Auto State according to target fan state: " + value);
-        if (this._model === '438') {
+        if (this._model === '438' || this._model === '520') {
             this.setState({auto: value == 1 ? "ON" : "OFF"});
         } else {
             this.setState({fmod: value == 1 ? "AUTO" : "FAN"});
