@@ -196,7 +196,7 @@ class DysonLinkAccessory {
             // Remove the auto/manual characteristic from FanV2 and use button instead to workaround the existing issue
             var targetFanCharacteristic = this.fan.getCharacteristic(Characteristic.TargetFanState);
             if(targetFanCharacteristic){
-                this.fan.removeCharacteristic(TargetFanState);
+                this.fan.removeCharacteristic(targetFanCharacteristic);
             }
 
             this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
