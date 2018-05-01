@@ -237,7 +237,12 @@ class DysonLinkAccessory {
 
 
     isNightModeSwitchOn(){
-        return this.nightModeSwitch.getCharacteristic(Characteristic.On).value;
+        if(this.nightModeSwitch) {
+            return this.nightModeSwitch.getCharacteristic(Characteristic.On).value;
+        }
+        else {
+            return false;
+        }
     }
 }
 
