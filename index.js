@@ -54,11 +54,13 @@ class DysonPlatform {
                                 sensitivity = 1.0;
                             }
                             let nightModeVisible = accessory.nightModeVisible;
-                            if(!nightModeVisible) {
+                            if(nightModeVisible == null || nightModeVisible == undefined) {
+                                platform.log.debug("no night mode visible value, default to true");
                                 nightModeVisible = true;
                             }
                             let focusModeVisible = accessory.focusModeVisible;
-                            if(!focusModeVisible) {
+                            if(focusModeVisible == null || focusModeVisible == undefined) {
+                                platform.log.debug("no focus mode visible value, default to true");
                                 focusModeVisible = true;
                             }
                             let deviceInfo = accountDevices[accessory.serialNumber];
