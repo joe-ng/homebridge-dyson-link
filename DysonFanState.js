@@ -33,7 +33,7 @@ class DysonFanState {
         // }
         // With TP04 models average cflr and hflr
         let filterReading = newState["product-state"]["filf"] ||
-            (newState["product-state"]["cflr"] + newState["product-state"]["cflr"])/2;
+            (newState["product-state"]["cflr"] + newState["product-state"]["hflr"])/2;
         // Assuming the max life is 12 * 365 = 4380 hrs
         this._filterLife = Number.parseInt(filterReading) * 100 / 4380;
         // Set to chang the filter when the life is below 10%

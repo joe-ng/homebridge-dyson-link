@@ -96,6 +96,9 @@ class DysonPlatform {
                     });
 
                 }
+                else{
+                    platform.log.error("Unable to find config or accessories");
+                }
             });
         }
 
