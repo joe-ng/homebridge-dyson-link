@@ -2,7 +2,6 @@ class DysonFanState {
  
     constructor(heatAvailable) {
         this.heatAvailable = heatAvailable;
- 
     }
  
     getFieldValue(newState, field) {
@@ -50,7 +49,6 @@ class DysonFanState {
         this._filterLife = Number.parseInt(filterReading) * 100 / 4380;
         // Set to chang the filter when the life is below 10%
         this._filterChange = this._filterLife <10 ;
- 
         // The value property of CurrentHeaterCoolerState must be one of the following:
         // Characteristic.CurrentHeaterCoolerState.INACTIVE = 0;
         // Characteristic.CurrentHeaterCoolerState.IDLE = 1;
@@ -66,7 +64,6 @@ class DysonFanState {
                 this._currentHeaterCoolerState = 3;
                 break;
         }
- 
         if(this._fan){
             this._targetHeaterCoolerState = 2;
         }
@@ -77,7 +74,6 @@ class DysonFanState {
         if(this._auto) {
             this._targetHeaterCoolerState = 0;
         }
- 
     }
  
     get fanOn() { return this._fan; }
@@ -93,7 +89,6 @@ class DysonFanState {
     get heaterCoolerState() { return this._currentHeaterCoolerState; }
     get targetHeaterCoolerState() { return this._targetHeaterCoolerState;}
     get heatThreshold() { return this._heatThreshold;}
- 
 }
  
 module.exports = { DysonFanState };
