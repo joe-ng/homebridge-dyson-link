@@ -1,25 +1,36 @@
 class DysonFanState {
-
+ 
     constructor(heatAvailable) {
         this.heatAvailable = heatAvailable;
-
     }
-
+ 
+    getFieldValue(newState, field) {
+        var state = newState["product-state"];
+        if(state instanceof Object)
+        {
+            return state[field];
+        }
+        else
+        {
+            return newState[field];
+        }
+    }
+ 
     updateState(newState) {
-        this._fan = newState["product-state"]["fmod"] === "FAN" ||
-                    newState["product-state"]["fmod"] === "AUTO" ||
-                    newState["product-state"]["fpwr"] === "ON" ;
-
-        this._auto = newState["product-state"]["fmod"] === "AUTO" ||
-                    (newState["product-state"]["auto"] === "ON" && this._fan);
-
-        this._rotate = newState["product-state"]["oson"] === "ON";
-        this._nightMode = newState["product-state"]["nmod"] === "ON";        
-        this._speed = (Number.parseInt(newState["product-state"]["fnsp"])||5) * 10;
+        this._fan = this.getFieldValue(newState, "fmod") === "FAN" ||
+                    this.getFieldValue(newState, "fmod") === "AUTO" ||
+                    this.getFieldValue(newState, "fpwr") === "ON" ;
+ 
+        this._auto = this.getFieldValue(newState, "fmod") === "AUTO" ||
+                    (this.getFieldValue(newState, "auto") === "ON" && this._fan);
+ 
+        this._rotate = this.getFieldValue(newState, "oson") === "ON";
+        this._nightMode = this.getFieldValue(newState, "nmod") === "ON";        
+        this._speed = (Number.parseInt(this.getFieldValue(newState, "fnsp"))||5) * 10;
         if (this.heatAvailable) {
-            this._heat = newState["product-state"]["hmod"] === "HEAT";
-            this._focus = newState["product-state"]["ffoc"] === "ON";
-            this._heatThreshold = Number.parseFloat(newState["product-state"]["hmax"]) /10 - 273;
+            this._heat = this.getFieldValue(newState, "hmod") === "HEAT";
+            this._focus = this.getFieldValue(newState, "ffoc") === "ON";
+            this._heatThreshold = Number.parseFloat(this.getFieldValue(newState, "hmax")) /10 - 273;
         }
         // this._fanState = 0;
         // if (this._auto) {
@@ -32,19 +43,18 @@ class DysonFanState {
         //     this._fanState = 1;
         // }
         // With TP04 models average cflr and hflr
-        let filterReading = newState["product-state"]["filf"] ||
-            (newState["product-state"]["cflr"] + newState["product-state"]["cflr"])/2;
+        let filterReading = this.getFieldValue(newState, "filf") ||
+            (this.getFieldValue(newState, "cflr") + this.getFieldValue(newState, "cflr"))/2;
         // Assuming the max life is 12 * 365 = 4380 hrs
         this._filterLife = Number.parseInt(filterReading) * 100 / 4380;
         // Set to chang the filter when the life is below 10%
         this._filterChange = this._filterLife <10 ;
-
         // The value property of CurrentHeaterCoolerState must be one of the following:
         // Characteristic.CurrentHeaterCoolerState.INACTIVE = 0;
         // Characteristic.CurrentHeaterCoolerState.IDLE = 1;
         // Characteristic.CurrentHeaterCoolerState.HEATING = 2;
         // Characteristic.CurrentHeaterCoolerState.COOLING = 3;
-        switch(newState["product-state"]["fmod"]||newState["product-state"]["fpwr"]){
+        switch(this.getFieldValue(newState, "fmod")||this.getFieldValue(newState, "fpwr")){
             case "OFF":
                 this._currentHeaterCoolerState = 0;
                 break;
@@ -54,7 +64,6 @@ class DysonFanState {
                 this._currentHeaterCoolerState = 3;
                 break;
         }
-
         if(this._fan){
             this._targetHeaterCoolerState = 2;
         }
@@ -65,9 +74,8 @@ class DysonFanState {
         if(this._auto) {
             this._targetHeaterCoolerState = 0;
         }
-
     }
-
+ 
     get fanOn() { return this._fan; }
     get fanAuto() {return this._auto;}
     get fanRotate() {return this._rotate;}
@@ -81,7 +89,6 @@ class DysonFanState {
     get heaterCoolerState() { return this._currentHeaterCoolerState; }
     get targetHeaterCoolerState() { return this._targetHeaterCoolerState;}
     get heatThreshold() { return this._heatThreshold;}
-
 }
-
+ 
 module.exports = { DysonFanState };
