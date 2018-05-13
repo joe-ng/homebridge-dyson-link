@@ -166,23 +166,7 @@ class DysonLinkAccessory {
             //     .on("get", this.device.isHeatOn.bind(this.device))
             //     .on("set", this.device.setHeatOn.bind(this.device));
 
-            if(this.focusModeVisible) {
-                this.log.info("Jet Focus mode button is added");
-                this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
-                
-                this.focusSwitch
-                    .getCharacteristic(Characteristic.On)
-                    .on("get", this.device.isFocusedJet.bind(this.device))
-                    .on("set", this.device.setFocusedJet.bind(this.device));
 
-            }
-            else {
-                this.log.info("Jet Focus mode button is hidden");
-                let focusSwtich = this.accessory.getServiceByUUIDAndSubType(Service.Switch, "Jet Focus");
-                if(focusSwtich){
-                    this.accessory.removeService(focusSwtich);
-                }
-            }
             
             
             // Set the auto/manual mode in the FanV2 just for Cool/Heat device as it seemed to be problem for cool device
@@ -206,6 +190,27 @@ class DysonLinkAccessory {
                 .on("get", this.device.isFanAuto.bind(this.device))
                 .on("set", this.device.setFanAuto.bind(this.device));
             
+        }
+
+        // Add jet focus for Cool/Heat and 2018 Cool device
+        if(this.device.heatAvailable || this.device.is2018Dyson) {
+            if(this.focusModeVisible) {
+                this.log.info("Jet Focus mode button is added");
+                this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
+                
+                this.focusSwitch
+                    .getCharacteristic(Characteristic.On)
+                    .on("get", this.device.isFocusedJet.bind(this.device))
+                    .on("set", this.device.setFocusedJet.bind(this.device));
+
+            }
+            else {
+                this.log.info("Jet Focus mode button is hidden");
+                let focusSwtich = this.accessory.getServiceByUUIDAndSubType(Service.Switch, "Jet Focus");
+                if(focusSwtich){
+                    this.accessory.removeService(focusSwtich);
+                }
+            }
         }
     }
 

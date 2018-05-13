@@ -51,7 +51,7 @@ class DysonLinkDevice {
             this.statusSubscribeTopic = this._model + "/" + this._id + "/status/current";
             this.commandTopic = this._model + "/" + this._id + "/command";
 
-            this.fanState = new DysonFanState(this.heatAvailable);
+            this.fanState = new DysonFanState(this.heatAvailable, this.Is2018Dyson);
             this.environment = new DysonEnvironmentState(this.sensitivity);
             this.log.info("Air Quality Sensitivity (Default is 1): " + this.sensitivity);
 
@@ -251,7 +251,11 @@ class DysonLinkDevice {
     }
 
     setFocusedJet(value, callback) {
-        this.setState({ ffoc: value ? "ON" : "OFF" });
+        if(this.Is2018Dyson){
+            this.setState({ fdir: value ? "ON" : "OFF" });
+        }else {
+            this.setState({ ffoc: value ? "ON" : "OFF" });
+        }
         this.isFocusedJet(callback);
     }
 
@@ -309,7 +313,7 @@ class DysonLinkDevice {
     setFanOn(value, callback) {
         // Do not set the fmod to FAN if the fan is set to AUTO already
         if(!this.fanState.fanAuto || value!= 1){
-            if (this._model === '438' || this._model === '520') {
+            if (this.Is2018Dyson) {
                 this.setState({fpwr: value==1 ? "ON" : "OFF"})
             }
             else {
@@ -365,7 +369,7 @@ class DysonLinkDevice {
 
     setFanAuto(value, callback) {
         this.log.debug(this.displayName + " Set Fan Auto State according to target fan state: " + value);
-        if (this._model === '438' || this._model === '520') {
+        if (this.Is2018Dyson) {
             this.setState({auto: value == 1 ? "ON" : "OFF"});
         } else {
             this.setState({fmod: value == 1 ? "AUTO" : "FAN"});
@@ -444,6 +448,9 @@ class DysonLinkDevice {
 
     get valid() { return this._valid; }
     get heatAvailable() { return this._model === "455"; }
+
+    // TP04 is 438, DP04 is 520
+    get Is2018Dyson() { return this._model === "438" || this._model === "520" ;}
 
     get accessory() { return this._accessory ;}
     set accessory(acce) { this._accessory = acce; }

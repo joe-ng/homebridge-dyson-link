@@ -1,7 +1,8 @@
 class DysonFanState {
  
-    constructor(heatAvailable) {
+    constructor(heatAvailable, is2018Dyson) {
         this.heatAvailable = heatAvailable;
+        this.is2018Dyson = is2018Dyson;
     }
  
     getFieldValue(newState, field) {
@@ -31,6 +32,9 @@ class DysonFanState {
             this._heat = this.getFieldValue(newState, "hmod") === "HEAT";
             this._focus = this.getFieldValue(newState, "ffoc") === "ON";
             this._heatThreshold = Number.parseFloat(this.getFieldValue(newState, "hmax")) /10 - 273;
+        } 
+        if( this.is2018Dyson){
+            this._focus = this.getFieldValue(newState, "fdir") === "ON";
         }
         // this._fanState = 0;
         // if (this._auto) {
