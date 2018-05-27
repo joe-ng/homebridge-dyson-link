@@ -47,8 +47,7 @@ class DysonPlatform {
                     let accountPassword = this.config.password || process.env.DYSON_PASSWORD;
                     let accountEmail = this.config.email || process.env.DYSON_EMAIL;
                     this.getDevicesFromAccount(accountEmail, accountPassword, config.country, (accountDevices) => {
-                        this.config.accessories.forEach((accessory) => {
-                            platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
+                        this.config.accessories.forEach((accessory) => {                            
                             let sensitivity = accessory.sensitivity;
                             if (!sensitivity) {
                                 sensitivity = 1.0;
@@ -72,6 +71,7 @@ class DysonPlatform {
                             else {
                                 password = crypto.createHash('sha512').update(accessory.password, "utf8").digest("base64");
                             }
+                            platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
                             let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, password, 
                                 platform.log, sensitivity);
                             if (device.valid) {

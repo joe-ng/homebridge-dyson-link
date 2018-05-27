@@ -170,11 +170,24 @@ class DysonLinkAccessory {
             
             
             // Set the auto/manual mode in the FanV2 just for Cool/Heat device as it seemed to be problem for cool device
-            this.fan.getCharacteristic(Characteristic.TargetFanState)
-                .setValue(0)
+            // Removed this for now as FanV2 is not working for this
+            // this.fan.getCharacteristic(Characteristic.TargetFanState)
+            //     .setValue(0)
+            //     .on("get", this.device.isFanAuto.bind(this.device))
+            //     .on("set", this.device.setFanAuto.bind(this.device));
+            // Remove the auto/manual characteristic from FanV2 and use button instead to workaround the existing issue
+            var targetFanCharacteristic = this.fan.getCharacteristic(Characteristic.TargetFanState);
+            if(targetFanCharacteristic){
+                this.fan.removeCharacteristic(targetFanCharacteristic);
+            }
+
+            this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
+            
+            this.autoSwitch
+                .getCharacteristic(Characteristic.On)
                 .on("get", this.device.isFanAuto.bind(this.device))
                 .on("set", this.device.setFanAuto.bind(this.device));
-        }
+}
         else{
 
             // Remove the auto/manual characteristic from FanV2 and use button instead to workaround the existing issue
