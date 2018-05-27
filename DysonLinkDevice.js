@@ -373,6 +373,10 @@ class DysonLinkDevice {
     setFanAuto(value, callback) {
         this.log.debug(this.displayName + " Set Fan Auto State according to target fan state: " + value);
         if (this.Is2018Dyson) {
+            // turn on the fan before setting the state as auto
+            if(value == 1){
+                this.setState({fpwr: "ON"})
+            }
             this.setState({auto: value == 1 ? "ON" : "OFF"});
         } else {
             this.setState({fmod: value == 1 ? "AUTO" : "FAN"});
