@@ -12,7 +12,7 @@ function setHomebridge(homebridge) {
 }
 
 class DysonLinkAccessory {
-    constructor(displayName, device, accessory, log, nightModeVisible, focusModeVisible) {
+    constructor(displayName, device, accessory, log, nightModeVisible, focusModeVisible, autoModeVisible) {
 
 
         this.device = device;
@@ -24,6 +24,7 @@ class DysonLinkAccessory {
 
         this.nightModeVisible = nightModeVisible;
         this.focusModeVisible = focusModeVisible;
+        this.autoModeVisible = autoModeVisible;
 
         this.initSensor();
         this.initFanState();
@@ -56,6 +57,17 @@ class DysonLinkAccessory {
         this.airSensor
             .getCharacteristic(Characteristic.AirQuality)
             .on("get", this.device.getAirQuality.bind(this.device));
+
+
+        // Updates the accessory information
+        var accessoryInformationService = this.getService(Service.AccessoryInformation);
+        accessoryInformationService.setCharacteristic(Characteristic.Manufacturer, "Dyson");
+        if (this.device.model == "438" || this.device.model == "520") {
+            accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson Pure Cool " + this.device.model);
+        } else {
+            accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson " + this.device.model);
+        }
+        accessoryInformationService.setCharacteristic(Characteristic.SerialNumber, this.device.serialNumber);
     }
 
     initFanState() {
@@ -97,6 +109,9 @@ class DysonLinkAccessory {
 
         // This is actually the fan speed instead of rotation speed but homekit fan does not support this
         this.fan.getCharacteristic(Characteristic.RotationSpeed)
+            .setProps({
+                minStep: 10
+            })
             .on("get", this.device.getFanSpeed.bind(this.device))
             .on("set", this.device.setFanSpeed.bind(this.device));        
 
@@ -196,12 +211,13 @@ class DysonLinkAccessory {
                 this.fan.removeCharacteristic(targetFanCharacteristic);
             }
 
-            this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
-            
-            this.autoSwitch
-                .getCharacteristic(Characteristic.On)
-                .on("get", this.device.isFanAuto.bind(this.device))
-                .on("set", this.device.setFanAuto.bind(this.device));
+            if (this.autoModeVisible) {
+                this.autoSwitch = this.getServiceBySubtype(Service.Switch, "Auto - " + this.displayName, "Auto");
+                this.autoSwitch
+                    .getCharacteristic(Characteristic.On)
+                    .on("get", this.device.isFanAuto.bind(this.device))
+                    .on("set", this.device.setFanAuto.bind(this.device));
+            }
             
         }
 
