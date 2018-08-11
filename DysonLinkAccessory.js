@@ -59,6 +59,17 @@ class DysonLinkAccessory {
             .on("get", this.device.getAirQuality.bind(this.device));
 
 
+        if (this.device.model == "438" || this.device.model == "520") {
+            this.airSensor.getCharacteristic(Characteristic.PM2_5Density)
+                .on("get", this.device.getPM2_5Density.bind(this.device));
+            this.airSensor.getCharacteristic(Characteristic.PM10Density)
+                .on("get", this.device.getPM10Density.bind(this.device));
+            this.airSensor.getCharacteristic(Characteristic.VOCDensity)
+                .on("get", this.device.getVOCDensity.bind(this.device));
+            this.airSensor.getCharacteristic(Characteristic.NitrogenDioxideDensity)
+                .on("get", this.device.getNitrogenDioxideDensity.bind(this.device));
+        }
+
         // Updates the accessory information
         var accessoryInformationService = this.getService(Service.AccessoryInformation);
         accessoryInformationService.setCharacteristic(Characteristic.Manufacturer, "Dyson");

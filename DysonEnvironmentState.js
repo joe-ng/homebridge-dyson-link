@@ -5,19 +5,33 @@ class DysonEnvironmentState {
         this._lastUpdated = new Date(newState.time);
 
         // Gets all possible values from the data (depending on the model)
-        let pm25 = this.getCharacteristicValue(newState.data.pm25);
-        let pm10 = this.getCharacteristicValue(newState.data.pm10);
-        let voc = this.getCharacteristicValue(newState.data.va10);
-        let no2 = this.getCharacteristicValue(newState.data.noxl);
+        this._pm2_5Density = this.getNumericValue(newState.data.p25r);
+        this._pm10Density = this.getNumericValue(newState.data.p10r);
+        this._vocDensity = this.getNumericValue(newState.data.va10);
+        this._nitrogenDioxideDensity = this.getNumericValue(newState.data.noxl);
         let p = this.getCharacteristicValue(newState.data.pact);
         let v = this.getCharacteristicValue(newState.data.vact);
 
         // Gets the highest value, which means the one with the baddest results
-        this._airQuality = Math.max(pm25, pm10, voc, no2, p, v);
+        this._airQuality = Math.max(
+            this.getCharacteristicValue(newState.data.pm25), 
+            this.getCharacteristicValue(newState.data.pm10),
+            this.getCharacteristicValue(newState.data.va10),
+            this.getCharacteristicValue(newState.data.noxl),
+            p, v);
         
         this._humidity = Number.parseInt(newState.data.hact);
         // Reference: http://aakira.hatenablog.com/entry/2016/08/12/012654
         this._temperature = Number.parseFloat(newState.data.tact) / 10 - 273;
+    }
+
+    getNumericValue(rawValue) {
+
+        // Converts the raw value into an integer
+        if (!rawValue) {
+            return 0;
+        }
+        return Number.parseInt(rawValue);
     }
 
     getCharacteristicValue(rawValue) {
@@ -46,6 +60,10 @@ class DysonEnvironmentState {
 
     get lastUpdated() {return this._lastUpdated;}
     get airQuality() {return this._airQuality;}
+    get pm2_5Density() {return this._pm2_5Density;}
+    get pm10Density() {return this._pm10Density;}
+    get vocDensity() {return this._vocDensity;}
+    get nitrogenDioxideDensity() {return this._nitrogenDioxideDensity;}
     get humidity() {return this._humidity;}
     get temperature() {return this._temperature;}
 

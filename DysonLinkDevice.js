@@ -441,7 +441,27 @@ class DysonLinkDevice {
             this.log.info(this.displayName + "- air quality cached value: " + this.environment.airQuality);
             callback(null, this.environment.airQuality);
         }
+    }
 
+    getPM2_5Density(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.pm2_5Density);
+        }.bind(this));
+    }
+    getPM10Density(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.pm10Density);
+        }.bind(this));
+    }
+    getVOCDensity(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.vocDensity);
+        }.bind(this));
+    }
+    getNitrogenDioxideDensity(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.nitrogenDioxideDensity);
+        }.bind(this));
     }
 
     notUpdatedRecently() {
