@@ -310,33 +310,33 @@ class DysonLinkDevice {
     }
 
     setFanOn(value, callback) {
-        this.log.error("CHECK VALUE" + value);
         // Do not set the fmod to FAN if the fan is set to AUTO already
-        if(!this.fanState.fanAuto || value!= 1){
-            this.isFanOn(function(isOn) {
+        if(!this.fanState.fanAuto || value != 1){
 
-            });
-            if (this.Is2018Dyson) {
-                this.setState({fpwr: value==1 ? "ON" : "OFF"})
-            }
-            else {
-                this.setState({fmod: value == 1 ? "FAN" : "OFF"});
-            }
-            // Try to set the fan status according to the value in the home app
-            if(value ==1) {
-                if(this.accessory.getFanSpeedValue() >0 && !this.fanState.fanAuto) {
-                    this.log.info(this.displayName + " Try to restore the fan speed state from home app to " + this.accessory.getFanSpeedValue());
-                    this.setState({ fnsp: Math.round(this.accessory.getFanSpeedValue() / 10).toString() });
+            // Checks if the fan is already in the requested state (HomeKit wants to set the Active characteristic every time the rotation speed changes)
+            if (value != 1 || (value == 1 && !this.fanState.fanOn)) {
+                if (this.Is2018Dyson) {
+                    this.setState({fpwr: value==1 ? "ON" : "OFF"})
                 }
-                if(this.accessory.isSwingModeButtonOn()) {
-                    this.log.info(this.displayName + " Try to restore the fan swing state from home app");
-                    this.setState({ oson: "ON" });
-                }
-                if(this.accessory.isNightModeSwitchOn()) {
-                    this.log.info(this.displayName + " Try to restore the night mode state from home app");
-                    this.setState({ nmod: "ON" });
+                else {
+                    this.setState({fmod: value == 1 ? "FAN" : "OFF"});
                 }
 
+                // Try to set the fan status according to the value in the home app
+                if(value ==1) {
+                    if(this.accessory.getFanSpeedValue() >0 && !this.fanState.fanAuto) {
+                        this.log.info(this.displayName + " Try to restore the fan speed state from home app to " + this.accessory.getFanSpeedValue());
+                        this.setState({ fnsp: Math.round(this.accessory.getFanSpeedValue() / 10).toString() });
+                    }
+                    if(this.accessory.isSwingModeButtonOn()) {
+                        this.log.info(this.displayName + " Try to restore the fan swing state from home app");
+                        this.setState({ oson: "ON" });
+                    }
+                    if(this.accessory.isNightModeSwitchOn()) {
+                        this.log.info(this.displayName + " Try to restore the night mode state from home app");
+                        this.setState({ nmod: "ON" });
+                    }
+                }
             }
         }
         this.isFanOn(callback);
