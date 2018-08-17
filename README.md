@@ -83,14 +83,14 @@ There are a few optional parameters for each accessory, E.g.
           "serialNumber": "XXX-XX-XXXXXXXX",
           // No device password needed if TP04 or DP04
 
-          // Air quality sensitivity - This is default to 1
-          "sensitivity" : 1,
-
           // This controls the visibility of Night Mode button, default to true
           "nightModeVisible" : true,
 
           // This controls the visibility of Jet Focus button, default to true
-          "focusModeVisible" : true
+          "focusModeVisible" : true,
+
+          // This controls the visibility of Auto button, default to true
+          "autoModeVisible" : true
 
         },
         {
@@ -99,9 +99,6 @@ There are a few optional parameters for each accessory, E.g.
           "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
           "password": "password of your second device"
           // Password may be used with other models
-
-          // Air quality sensitivity - This is default to 1
-          "sensitivity" : 1,
 
           // This controls the visibility of Night Mode button, default to true
           "nightModeVisible" : true,

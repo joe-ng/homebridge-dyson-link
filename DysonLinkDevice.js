@@ -12,9 +12,9 @@ class DysonLinkDevice {
     static get SENSOR_EVENT() { return "sensor-updated"; }
     static get STATE_EVENT() { return "state-updated"; }
 
-    constructor(displayName, ip, serialNumber, password, log, sensitivity) {
+    constructor(displayName, ip, serialNumber, password, log) {
         this.log = log;
-        this.sensitivity = sensitivity;
+        this.serialNumber = serialNumber;
         this.displayName = displayName;
         let serialRegex = /DYSON-(\w{3}-\w{2}-\w{8})-(\w{3})/;
         let [, id, model] = serialNumber.match(serialRegex) || [];
@@ -26,7 +26,7 @@ class DysonLinkDevice {
 
         else {
             this._id = id;
-            this._model = model;
+            this.model = model;
             this._valid = true;
             this._ip = ip;
             this._password = password;
@@ -42,18 +42,17 @@ class DysonLinkDevice {
                 username: this._id,
                 password: this._password
             }
-            if (this._model === '438' || this._model === '520') {
+            if (this.model === '438' || this.model === '520') {
                 mqttClientOptions.protocolVersion = 3;
                 mqttClientOptions.protocolId = 'MQIsdp';
             }
             this.mqttClient = mqtt.connect("mqtt://" + this._ip, mqttClientOptions);
 
-            this.statusSubscribeTopic = this._model + "/" + this._id + "/status/current";
-            this.commandTopic = this._model + "/" + this._id + "/command";
+            this.statusSubscribeTopic = this.model + "/" + this._id + "/status/current";
+            this.commandTopic = this.model + "/" + this._id + "/command";
 
             this.fanState = new DysonFanState(this.heatAvailable, this.Is2018Dyson);
-            this.environment = new DysonEnvironmentState(this.sensitivity);
-            this.log.info("Air Quality Sensitivity (Default is 1): " + this.sensitivity);
+            this.environment = new DysonEnvironmentState();
 
             this.mqttClient.on('connect', () => {
                 this.log.info("Connected to " + this._id + ". subscribe now");
@@ -312,28 +311,32 @@ class DysonLinkDevice {
 
     setFanOn(value, callback) {
         // Do not set the fmod to FAN if the fan is set to AUTO already
-        if(!this.fanState.fanAuto || value!= 1){
-            if (this.Is2018Dyson) {
-                this.setState({fpwr: value==1 ? "ON" : "OFF"})
-            }
-            else {
-                this.setState({fmod: value == 1 ? "FAN" : "OFF"});
-            }
-            // Try to set the fan status according to the value in the home app
-            if(value ==1) {
-                if(this.accessory.getFanSpeedValue() >0 && !this.fanState.fanAuto) {
-                    this.log.info(this.displayName + " Try to restore the fan speed state from home app to " + this.accessory.getFanSpeedValue());
-                    this.setState({ fnsp: Math.round(this.accessory.getFanSpeedValue() / 10).toString() });
+        if(!this.fanState.fanAuto || value != 1){
+
+            // Checks if the fan is already in the requested state (HomeKit wants to set the Active characteristic every time the rotation speed changes)
+            if (value != 1 || (value == 1 && !this.fanState.fanOn)) {
+                if (this.Is2018Dyson) {
+                    this.setState({fpwr: value==1 ? "ON" : "OFF"})
                 }
-                if(this.accessory.isSwingModeButtonOn()) {
-                    this.log.info(this.displayName + " Try to restore the fan swing state from home app");
-                    this.setState({ oson: "ON" });
-                }
-                if(this.accessory.isNightModeSwitchOn()) {
-                    this.log.info(this.displayName + " Try to restore the night mode state from home app");
-                    this.setState({ nmod: "ON" });
+                else {
+                    this.setState({fmod: value == 1 ? "FAN" : "OFF"});
                 }
 
+                // Try to set the fan status according to the value in the home app
+                if(value ==1) {
+                    if(this.accessory.getFanSpeedValue() >0 && !this.fanState.fanAuto) {
+                        this.log.info(this.displayName + " Try to restore the fan speed state from home app to " + this.accessory.getFanSpeedValue());
+                        this.setState({ fnsp: Math.round(this.accessory.getFanSpeedValue() / 10).toString() });
+                    }
+                    if(this.accessory.isSwingModeButtonOn()) {
+                        this.log.info(this.displayName + " Try to restore the fan swing state from home app");
+                        this.setState({ oson: "ON" });
+                    }
+                    if(this.accessory.isNightModeSwitchOn()) {
+                        this.log.info(this.displayName + " Try to restore the night mode state from home app");
+                        this.setState({ nmod: "ON" });
+                    }
+                }
             }
         }
         this.isFanOn(callback);
@@ -438,7 +441,27 @@ class DysonLinkDevice {
             this.log.info(this.displayName + "- air quality cached value: " + this.environment.airQuality);
             callback(null, this.environment.airQuality);
         }
+    }
 
+    getPM2_5Density(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.pm2_5Density);
+        }.bind(this));
+    }
+    getPM10Density(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.pm10Density);
+        }.bind(this));
+    }
+    getVOCDensity(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.vocDensity);
+        }.bind(this));
+    }
+    getNitrogenDioxideDensity(callback) {
+        this.getAirQuality(function() {
+            callback(null, this.environment.nitrogenDioxideDensity);
+        }.bind(this));
     }
 
     notUpdatedRecently() {
@@ -447,10 +470,10 @@ class DysonLinkDevice {
     }
 
     get valid() { return this._valid; }
-    get heatAvailable() { return this._model === "455"; }
+    get heatAvailable() { return this.model === "455"; }
 
     // TP04 is 438, DP04 is 520
-    get Is2018Dyson() { return this._model === "438" || this._model === "520" ;}
+    get Is2018Dyson() { return this.model === "438" || this.model === "520" ;}
 
     get accessory() { return this._accessory ;}
     set accessory(acce) { this._accessory = acce; }

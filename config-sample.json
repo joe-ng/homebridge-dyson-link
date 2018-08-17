@@ -20,8 +20,7 @@
           "ip": "ip of your second device",
           "displayName": "Name to be shown on Home App",
           "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
-          "password": "password of your second device",
-          "sensitivity": 1 // the higher, the worse air quality level
+          "password": "password of your second device"
         }
         // If you have more than one device(s), just add the same config below
       ]

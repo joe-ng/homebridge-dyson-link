@@ -47,11 +47,7 @@ class DysonPlatform {
                     let accountPassword = this.config.password || process.env.DYSON_PASSWORD;
                     let accountEmail = this.config.email || process.env.DYSON_EMAIL;
                     this.getDevicesFromAccount(accountEmail, accountPassword, config.country, (accountDevices) => {
-                        this.config.accessories.forEach((accessory) => {                            
-                            let sensitivity = accessory.sensitivity;
-                            if (!sensitivity) {
-                                sensitivity = 1.0;
-                            }
+                        this.config.accessories.forEach((accessory) => {
                             let nightModeVisible = accessory.nightModeVisible;
                             if(nightModeVisible == null || nightModeVisible == undefined) {
                                 platform.log.debug("no night mode visible value, default to true");
@@ -61,6 +57,11 @@ class DysonPlatform {
                             if(focusModeVisible == null || focusModeVisible == undefined) {
                                 platform.log.debug("no focus mode visible value, default to true");
                                 focusModeVisible = true;
+                            }
+                            let autoModeVisible = accessory.autoModeVisible;
+                            if(autoModeVisible == null || autoModeVisible == undefined) {
+                                platform.log.debug("no auto mode visible value, default to true");
+                                autoModeVisible = true;
                             }
                             let deviceInfo = accountDevices[accessory.serialNumber];
                             var password = ''
@@ -72,8 +73,7 @@ class DysonPlatform {
                                 password = crypto.createHash('sha512').update(accessory.password, "utf8").digest("base64");
                             }
                             platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
-                            let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, password, 
-                                platform.log, sensitivity);
+                            let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, password, platform.log);
                             if (device.valid) {
                                 platform.log("Device serial number format valids");
                                 let uuid = UUIDGen.generate(accessory.serialNumber);
@@ -82,13 +82,13 @@ class DysonPlatform {
                                 if (!cachedAccessory) {
                                     platform.log("Device not cached. Create a new one");
                                     let dysonAccessory = new Accessory(accessory.displayName, uuid);
-                                    new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log, nightModeVisible, focusModeVisible);
+                                    new DysonLinkAccessory(accessory.displayName, device, dysonAccessory, platform.log, nightModeVisible, focusModeVisible, autoModeVisible);
                                     platform.api.registerPlatformAccessories("homebridge-dyson-link", "DysonPlatform", [dysonAccessory]);
                                     platform.accessories.push(accessory);
                                 } else {
                                     platform.log("Device cached. Try to update this");
                                     cachedAccessory.displayName = accessory.displayName;
-                                    new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log, nightModeVisible, focusModeVisible);
+                                    new DysonLinkAccessory(accessory.displayName, device, cachedAccessory, platform.log, nightModeVisible, focusModeVisible, autoModeVisible);
                                     platform.api.updatePlatformAccessories([cachedAccessory]);
                                 }
                             }
