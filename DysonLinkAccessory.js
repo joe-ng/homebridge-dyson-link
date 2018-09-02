@@ -128,7 +128,7 @@ class DysonLinkAccessory {
 
         if(this.nightModeVisible) {
             this.log.info("Night mode button is added");
-            this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "Night Mode - " + this.displayName, "Night Mode");
+            this.nightModeSwitch = this.getServiceBySubtype(Service.Switch, "LED - " + this.displayName, "LED");//changed name to LED (and reversing the Night Mode switch to function as a normal light. Either the Fan LED Light is ON or OFF.
 
             this.nightModeSwitch
                 .getCharacteristic(Characteristic.On)
