@@ -5,7 +5,6 @@
   "description": "HomeBridge HTTP Status Control",
   "accessories": [],
   "platforms": [
-    // This is the config for this plugin  
     {
       "platform": "DysonPlatform",
       "name": "DysonPlatform",
@@ -22,9 +21,7 @@
           "serialNumber": "DYSON-XXX-XX-XXXXXXXX-XXX",
           "password": "password of your second device"
         }
-        // If you have more than one device(s), just add the same config below
       ]
     }
-    // End of the config
   ]
 }

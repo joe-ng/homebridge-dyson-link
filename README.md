@@ -18,8 +18,9 @@ See config-sample.json for example
 We will need to input the IP, display name, serial number and password to the config
 
 The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters) of your device can be found on the device and the manual. The serial number here is the same as the SSID of your Dyson wifi and the password is the wifi password. 
+Note: Be sure to remove the commit lines (like `// this is ..`) below before you paste the config to your homebridge config.
 
-```
+```json
 "platforms": [
     // This is the config for this plugin  
     {
@@ -46,7 +47,8 @@ The serial number(DYSON-XXX-XX-XXXXXXXX-XXX) and password(normally 8 characters)
 ```
 
 For newer models, (like TP04/DP04), authentication is enabled by using a Dyson account registered with the device. Add email, password to the platform configuration or set the environment variables DYSON_EMAIL and DYSON_PASSWORD. For example:
-```
+
+```json
 "platforms": [
     // This is the config for this plugin  
     {
@@ -76,6 +78,8 @@ For newer models, (like TP04/DP04), authentication is enabled by using a Dyson a
 
 There are a few optional parameters for each accessory, E.g.
 
+
+```json
 "accessories": [
         {
           "ip": "ip of your device",
@@ -107,6 +111,7 @@ There are a few optional parameters for each accessory, E.g.
           "focusModeVisible" : true
         }
       ]
+```
 
 ## Features Supported
 
