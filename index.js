@@ -69,8 +69,12 @@ class DysonPlatform {
                                 password = deviceInfo.password;
                                 accessory.serialNumber = 'DYSON-'+accessory.serialNumber+'-'+deviceInfo.ProductType;
                             }
-                            else {
+                            else if (accessory.password) {
                                 password = crypto.createHash('sha512').update(accessory.password, "utf8").digest("base64");
+                            }
+                            else {
+                                platform.log.error("Missing password for device with serial number " + accessory.serialNumber + ", devices found on your account: " + Object.keys(accountDevices).join(", "));
+                                return;
                             }
                             platform.log(accessory.displayName + " IP:" + accessory.ip + " Serial Number:" + accessory.serialNumber);
                             let device = new DysonLinkDevice(accessory.displayName, accessory.ip, accessory.serialNumber, password, platform.log);
