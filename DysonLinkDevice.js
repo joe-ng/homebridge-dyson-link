@@ -470,7 +470,8 @@ class DysonLinkDevice {
     }
 
     get valid() { return this._valid; }
-    get heatAvailable() { return this.model === "455"; }
+    // 455 is Dyson Pure Hot + Cool Link, 527 is Dyson Pure Hot + Cool 2018
+    get heatAvailable() { return this.model === "455" || this.model === "527"; }
 
     // TP04 is 438, DP04 is 520
     get Is2018Dyson() { return this.model === "438" || this.model === "520" ;}
