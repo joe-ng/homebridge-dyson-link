@@ -233,7 +233,7 @@ class DysonLinkAccessory {
         }
 
         // Add jet focus for Cool/Heat and 2018 Cool device
-        if(this.device.heatAvailable || this.device.is2018Dyson) {
+        if((this.device.heatAvailable && this.device.model !== '527') || this.device.is2018Dyson) {
             if(this.focusModeVisible) {
                 this.log.info("Jet Focus mode button is added");
                 this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
