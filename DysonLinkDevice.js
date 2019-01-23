@@ -178,7 +178,13 @@ class DysonLinkDevice {
     }
 
     setThresholdTemperture(value, callback) {
-        this.setState({hmax: (value + 273)*10 });
+        var kelvin = (value + 273) * 10;
+        if (this.model === '527') {
+            this.setState({hmax: kelvin.toString()});
+        } else {
+            this.setState({hmax: kelvin});
+        }
+
         this.getThresholdTemperture(callback);
 
     }
