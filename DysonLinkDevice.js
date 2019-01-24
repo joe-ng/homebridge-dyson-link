@@ -152,9 +152,18 @@ class DysonLinkDevice {
     }
 
     setHeaterOn(value, callback) {
-        this.setState({ fmod: value==1 ? "FAN" : "OFF" });
-        if(value && this.fanState.heaterCoolerState == 2) {
+        if (this.model === '527') {
+            if (value == 1) {
+                this.setState({ hmod: "HEAT" });
+            } else {
+                this.setState({ fmod: "FAN" });
+                this.setState({ hmod: "OFF" });
+            }
+        } else {
+            this.setState({ fmod: value == 1 ? "FAN" : "OFF" });
+            if(value && this.fanState.heaterCoolerState == 2) {
 
+            }
         }
         this.isFanOn(callback);
     }

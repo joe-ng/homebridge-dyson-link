@@ -167,11 +167,20 @@ class DysonLinkAccessory {
             this.heater.getCharacteristic(Characteristic.CurrentHeaterCoolerState)
                 .on("set", this.device.setCurrentHeaterCoolerState.bind(this.device))
                 .on("get", this.device.getCurrentHeaterCoolerState.bind(this.device));
-            
 
-            this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
-                .on("get", this.device.getHeaterCoolerState.bind(this.device))
-                .on("set", this.device.setHeaterCoolerState.bind(this.device));
+            if (this.device.model === '527') {
+                this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+                    .on("get", this.device.getHeaterCoolerState.bind(this.device))
+                    .on("set", this.device.setHeaterCoolerState.bind(this.device))
+                    .setProps({
+                        // Disable COOL and AUTO, leave only HEAT
+                        validValues: [1],
+                    });
+            } else {
+                this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+                    .on("get", this.device.getHeaterCoolerState.bind(this.device))
+                    .on("set", this.device.setHeaterCoolerState.bind(this.device));
+            }
 
             this.heater.getCharacteristic(Characteristic.CurrentTemperature)
                 .on("get", this.device.getTemperture.bind(this.device));
