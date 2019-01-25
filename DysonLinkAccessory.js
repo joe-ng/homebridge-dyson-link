@@ -41,11 +41,16 @@ class DysonLinkAccessory {
 
     initSensor() {
         this.log("Init Sensor for " + this.displayName);
-        this.temperatureSensor = this.getService(Service.TemperatureSensor);
-        this.temperatureSensor
-            .getCharacteristic(Characteristic.CurrentTemperature)
-            .setProps({ minValue: -50, maxValue: 100, unit: "celsius" })
-            .on("get", this.device.getTemperture.bind(this.device));
+
+        if (this.device.model !== '527') {
+            // Don't add temperature sensor on HP04 since heater already acts as temperature sensor
+            // TODO: maybe we could do this to all devices that have heatAvailable?
+            this.temperatureSensor = this.getService(Service.TemperatureSensor);
+            this.temperatureSensor
+                .getCharacteristic(Characteristic.CurrentTemperature)
+                .setProps({minValue: -50, maxValue: 100, unit: "celsius"})
+                .on("get", this.device.getTemperture.bind(this.device));
+        }
 
         this.humiditySensor = this.getService(Service.HumiditySensor);
         this.humiditySensor
