@@ -236,13 +236,13 @@ class DysonLinkDevice {
     }
 
     setNightMode(value, callback) {
-        this.setState({ nmod: value ? "ON" : "OFF" });
+        this.setState({ nmod: value ? "OFF" : "ON" });
         this.isNightMode(callback);
     }
 
     isNightMode(callback) {
         this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Night Mode: " + this.fanState.nightMode);
+            this.log.info(this.displayName + " - Night Mode: " + this.fanState.nightMode);//this.fanState.nightMode has been reversed to function in HomeKit as an LED light on/off.
             callback(null, this.fanState.nightMode);
         });
         // Request for update
