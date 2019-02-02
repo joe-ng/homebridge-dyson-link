@@ -78,7 +78,9 @@ class DysonLinkAccessory {
         // Updates the accessory information
         var accessoryInformationService = this.getService(Service.AccessoryInformation);
         accessoryInformationService.setCharacteristic(Characteristic.Manufacturer, "Dyson");
-        if (this.device.model == "438" || this.device.model == "520") {
+        if (this.device.model == "527") {
+            accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson Pure Hot + Cool " + this.device.model);
+        } else if (this.device.model == "438" || this.device.model == "520") {
             accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson Pure Cool " + this.device.model);
         } else {
             accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson " + this.device.model);
