@@ -92,10 +92,12 @@ class DysonLinkDevice {
         if(senorlisternerCount <=1 && fanlisternerCount <=1) {
             this.log("Request for current state update");
             let currentTime = new Date();
-            this.mqttClient.publish(this.commandTopic, JSON.stringify({
-                msg: 'REQUEST-CURRENT-STATE',
-                time: currentTime.toISOString()
-            }));
+                if(this.mqttClient.connected){
+                this.mqttClient.publish(this.commandTopic, JSON.stringify({
+                    msg: 'REQUEST-CURRENT-STATE',
+                    time: currentTime.toISOString()
+                }));
+            }
         }
     }
 
@@ -128,12 +130,17 @@ class DysonLinkDevice {
     }
 
     getHeaterCoolerState(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Target Heater Cooler State:" + this.fanState.targetHeaterCoolerState);
-            callback(null, this.fanState.targetHeaterCoolerState);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Target Heater Cooler State:" + this.fanState.targetHeaterCoolerState);
+                callback(null, this.fanState.targetHeaterCoolerState);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
 
@@ -143,12 +150,17 @@ class DysonLinkDevice {
     }
 
     getCurrentHeaterCoolerState(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Heater Cooler State:" + this.fanState.heaterCoolerState);
-            callback(null, this.fanState.heaterCoolerState);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Heater Cooler State:" + this.fanState.heaterCoolerState);
+                callback(null, this.fanState.heaterCoolerState);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setHeaterOn(value, callback) {
@@ -183,21 +195,31 @@ class DysonLinkDevice {
 
     }
     getThresholdTemperture(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Heat Threshold:" + this.fanState.heatThreshold);
-            callback(null, this.fanState.heatThreshold);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Heat Threshold:" + this.fanState.heatThreshold);
+                callback(null, this.fanState.heatThreshold);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     getFanState(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Fan State:" + this.fanState.fanState);
-            callback(null, this.fanState.fanState);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Fan State:" + this.fanState.fanState);
+                callback(null, this.fanState.fanState);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setFanSpeed(value, callback) {
@@ -206,33 +228,48 @@ class DysonLinkDevice {
     }
 
     getFanSpeed(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Fan Speed:" + this.fanState.fanSpeed);
-            callback(null, this.fanState.fanSpeed);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Fan Speed:" + this.fanState.fanSpeed);
+                callback(null, this.fanState.fanSpeed);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     getFilterLife(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Filter Life(%):" + this.fanState.filterLife);
-            callback(null, this.fanState.filterLife);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Filter Life(%):" + this.fanState.filterLife);
+                callback(null, this.fanState.filterLife);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     getFilterChange(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Filter Change Required:" + this.fanState.filterChangeRequired);
-            // The value property of FilterChangeIndication must be one of the following:
-            // Characteristic.FilterChangeIndication.FILTER_OK = 0;
-            // Characteristic.FilterChangeIndication.CHANGE_FILTER = 1;
-            callback(null, this.fanState.filterChangeRequired? 1 :0);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Filter Change Required:" + this.fanState.filterChangeRequired);
+                // The value property of FilterChangeIndication must be one of the following:
+                // Characteristic.FilterChangeIndication.FILTER_OK = 0;
+                // Characteristic.FilterChangeIndication.CHANGE_FILTER = 1;
+                callback(null, this.fanState.filterChangeRequired? 1 :0);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setNightMode(value, callback) {
@@ -241,12 +278,14 @@ class DysonLinkDevice {
     }
 
     isNightMode(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Night Mode: " + this.fanState.nightMode);
-            callback(null, this.fanState.nightMode);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Night Mode: " + this.fanState.nightMode);
+                callback(null, this.fanState.nightMode);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
     }
 
     setFocusedJet(value, callback) {
@@ -259,12 +298,17 @@ class DysonLinkDevice {
     }
 
     isFocusedJet(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Focused Jet: " + this.fanState.fanFocused);
-            callback(null, this.fanState.fanFocused);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Focused Jet: " + this.fanState.fanFocused);
+                callback(null, this.fanState.fanFocused);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     sleep(ms){
@@ -287,12 +331,17 @@ class DysonLinkDevice {
     }
 
     isRotate(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Fan Rotate: " + this.fanState.fanRotate);
-            callback(null, this.fanState.fanRotate? 1:0);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Fan Rotate: " + this.fanState.fanRotate);
+                callback(null, this.fanState.fanRotate? 1:0);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setHeatOn(value, callback) {
@@ -301,12 +350,17 @@ class DysonLinkDevice {
     }
 
     isHeatOn(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Heat On: " + this.fanState.fanHeat);
-            callback(null, this.fanState.fanHeat);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Heat On: " + this.fanState.fanHeat);
+                callback(null, this.fanState.fanHeat);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setFanOn(value, callback) {
@@ -343,12 +397,17 @@ class DysonLinkDevice {
     }
 
     isFanOn(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Fan On: " + this.fanState.fanOn);
-            callback(null, this.fanState.fanOn? 1:0);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Fan On: " + this.fanState.fanOn);
+                callback(null, this.fanState.fanOn? 1:0);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setCurrentFanState(value, callback) {
@@ -361,13 +420,17 @@ class DysonLinkDevice {
     // Characteristic.CurrentFanState.IDLE = 1;
     // Characteristic.CurrentFanState.BLOWING_AIR = 2;
     getCurrentFanState(callback){
-
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Current Fan State: " + this.fanState.fanOn);
-            callback(null, this.fanState.fanOn? 2:0);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Current Fan State: " + this.fanState.fanOn);
+                callback(null, this.fanState.fanOn? 2:0);
+            });
+            // Request for update
+            this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
     }
 
     setFanAuto(value, callback) {
@@ -385,26 +448,37 @@ class DysonLinkDevice {
     }
 
     isFanAuto(callback) {
-        this.mqttEvent.once(this.STATE_EVENT, () => {
-            this.log.info(this.displayName + " - Fan Auto: " + this.fanState.fanAuto);
-            var fanValue = this.fanState.fanAuto? 1:0;
-            this.log.debug("Return target fan value as " +fanValue);
-            callback(null, this.fanState.fanAuto? 1:0);
-        });
-        // Request for update
-        this.requestForCurrentUpdate();
-    }
-
-    getTemperture(callback) {
-        this.log.debug(this.displayName + " Get temperture");
-        if (this.notUpdatedRecently()) {
-            this.environmentEvent.once(this.SENSOR_EVENT, () => {
-                this.log.info(this.displayName + "- temperture new value: " + this.environment.temperature);
-                // Wait until the update and return
-                callback(null, this.environment.temperature);
+        if(this.mqttClient.connected){
+            this.mqttEvent.once(this.STATE_EVENT, () => {
+                this.log.info(this.displayName + " - Fan Auto: " + this.fanState.fanAuto);
+                var fanValue = this.fanState.fanAuto? 1:0;
+                this.log.debug("Return target fan value as " +fanValue);
+                callback(null, this.fanState.fanAuto? 1:0);
             });
             // Request for update
             this.requestForCurrentUpdate();
+        }
+        else {
+            callback(null, 0);
+        }
+    }
+
+    getTemperture(callback) {
+        
+        this.log.debug(this.displayName + " Get temperture");
+        if (this.notUpdatedRecently()) {
+            if(this.mqttClient.connected){
+                this.environmentEvent.once(this.SENSOR_EVENT, () => {
+                    this.log.info(this.displayName + "- temperture new value: " + this.environment.temperature);
+                    // Wait until the update and return
+                    callback(null, this.environment.temperature);
+                });
+                // Request for update
+                this.requestForCurrentUpdate();
+            }
+            else {
+                callback(null, 0);
+            }
         }
         else {
             this.log.info(this.displayName + "- temperture cached value: " + this.environment.temperature);
@@ -415,31 +489,40 @@ class DysonLinkDevice {
     getHumidity(callback) {
         this.log.debug(this.displayName + " Get humidity");
         if (this.notUpdatedRecently()) {
-            this.environmentEvent.once(this.SENSOR_EVENT, () => {
-                this.log.info(this.displayName + "- humidity new value: " + this.environment.humidity);
-                // Wait until the update and return
-                callback(null, this.environment.humidity);
-            });
-            // Request for update
-            this.requestForCurrentUpdate();
+            if(this.mqttClient.connected){
+                this.environmentEvent.once(this.SENSOR_EVENT, () => {
+                    this.log.info(this.displayName + "- humidity new value: " + this.environment.humidity);
+                    // Wait until the update and return
+                    callback(null, this.environment.humidity);
+                });
+                // Request for update
+                this.requestForCurrentUpdate();
+            }
+            else{
+                callback(null,0);
+            }
         }
         else {
             this.log.info(this.displayName + "- humidity cached value: " + this.environment.humidity);
             callback(null, this.environment.humidity);
         }
-
     }
 
     getAirQuality(callback) {
         this.log.debug(this.displayName + " Get air quality");
         if (this.notUpdatedRecently()) {
-            this.environmentEvent.once(this.SENSOR_EVENT, () => {
-                this.log.info(this.displayName + " - air quality new value: " + this.environment.airQuality);
-                // Wait until the update and return
-                callback(null, this.environment.airQuality);
-            });
-            // Request for update
-            this.requestForCurrentUpdate();
+            if(this.mqttClient.connected){
+                this.environmentEvent.once(this.SENSOR_EVENT, () => {
+                    this.log.info(this.displayName + " - air quality new value: " + this.environment.airQuality);
+                    // Wait until the update and return
+                    callback(null, this.environment.airQuality);
+                });
+                // Request for update
+                this.requestForCurrentUpdate();
+            }
+            else{
+                callback(null,0);
+            }
         }
         else {
             this.log.info(this.displayName + "- air quality cached value: " + this.environment.airQuality);
@@ -474,10 +557,11 @@ class DysonLinkDevice {
     }
 
     get valid() { return this._valid; }
-    get heatAvailable() { return this.model === "455"; }
+    // 527 seems to be the 2018 Heat+Cool
+    get heatAvailable() { return this.model === "455" || this.model === "527" ; }
 
     // TP04 is 438, DP04 is 520
-    get Is2018Dyson() { return this.model === "438" || this.model === "520" ;}
+    get Is2018Dyson() { return this.model === "438" || this.model === "520" || this.model === "527";}
 
     get accessory() { return this._accessory ;}
     set accessory(acce) { this._accessory = acce; }

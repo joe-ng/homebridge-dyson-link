@@ -66,10 +66,12 @@ class DysonPlatform {
                             let deviceInfo = accountDevices[accessory.serialNumber];
                             var password = ''
                             if (deviceInfo) {
+                                platform.log("Use device password from account");
                                 password = deviceInfo.password;
                                 accessory.serialNumber = 'DYSON-'+accessory.serialNumber+'-'+deviceInfo.ProductType;
                             }
                             else if (accessory.password) {
+                                platform.log("Use device password from config file");
                                 password = crypto.createHash('sha512').update(accessory.password, "utf8").digest("base64");
                             }
                             else {
