@@ -164,9 +164,18 @@ class DysonLinkDevice {
     }
 
     setHeaterOn(value, callback) {
-        this.setState({ fmod: value==1 ? "FAN" : "OFF" });
-        if(value && this.fanState.heaterCoolerState == 2) {
+        if (this.model === '527') {
+            if (value == 1) {
+                this.setState({ hmod: "HEAT" });
+            } else {
+                this.setState({ fmod: "FAN" });
+                this.setState({ hmod: "OFF" });
+            }
+        } else {
+            this.setState({ fmod: value == 1 ? "FAN" : "OFF" });
+            if(value && this.fanState.heaterCoolerState == 2) {
 
+            }
         }
         this.isFanOn(callback);
     }
@@ -190,7 +199,13 @@ class DysonLinkDevice {
     }
 
     setThresholdTemperture(value, callback) {
-        this.setState({hmax: (value + 273)*10 });
+        var kelvin = (value + 273) * 10;
+        if (this.model === '527') {
+            this.setState({hmax: kelvin.toString()});
+        } else {
+            this.setState({hmax: kelvin});
+        }
+
         this.getThresholdTemperture(callback);
 
     }
@@ -557,11 +572,11 @@ class DysonLinkDevice {
     }
 
     get valid() { return this._valid; }
-    // 527 seems to be the 2018 Heat+Cool
-    get heatAvailable() { return this.model === "455" || this.model === "527" ; }
+    // 455 is Dyson Pure Hot + Cool Link, 527 is Dyson Pure Hot + Cool 2018
+    get heatAvailable() { return this.model === "455" || this.model === "527"; }
 
-    // TP04 is 438, DP04 is 520
-    get Is2018Dyson() { return this.model === "438" || this.model === "520" || this.model === "527";}
+    // TP04 is 438, DP04 is 520, HP04 is 527
+    get Is2018Dyson() { return this.model === "438" || this.model === "520" || this.model === "527"; }
 
     get accessory() { return this._accessory ;}
     set accessory(acce) { this._accessory = acce; }
