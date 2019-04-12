@@ -41,11 +41,16 @@ class DysonLinkAccessory {
 
     initSensor() {
         this.log("Init Sensor for " + this.displayName);
-        this.temperatureSensor = this.getService(Service.TemperatureSensor);
-        this.temperatureSensor
-            .getCharacteristic(Characteristic.CurrentTemperature)
-            .setProps({ minValue: -50, maxValue: 100, unit: "celsius" })
-            .on("get", this.device.getTemperture.bind(this.device));
+
+        if (this.device.model !== '527') {
+            // Don't add temperature sensor on HP04 since heater already acts as temperature sensor
+            // TODO: maybe we could do this to all devices that have heatAvailable?
+            this.temperatureSensor = this.getService(Service.TemperatureSensor);
+            this.temperatureSensor
+                .getCharacteristic(Characteristic.CurrentTemperature)
+                .setProps({minValue: -50, maxValue: 100, unit: "celsius"})
+                .on("get", this.device.getTemperture.bind(this.device));
+        }
 
         this.humiditySensor = this.getService(Service.HumiditySensor);
         this.humiditySensor
@@ -59,7 +64,7 @@ class DysonLinkAccessory {
             .on("get", this.device.getAirQuality.bind(this.device));
 
 
-        if (this.device.model == "438" || this.device.model == "520") {
+        if (this.device.model == "438" || this.device.model == "520" || this.device.model == "527") {
             this.airSensor.getCharacteristic(Characteristic.PM2_5Density)
                 .on("get", this.device.getPM2_5Density.bind(this.device));
             this.airSensor.getCharacteristic(Characteristic.PM10Density)
@@ -73,7 +78,9 @@ class DysonLinkAccessory {
         // Updates the accessory information
         var accessoryInformationService = this.getService(Service.AccessoryInformation);
         accessoryInformationService.setCharacteristic(Characteristic.Manufacturer, "Dyson");
-        if (this.device.model == "438" || this.device.model == "520") {
+        if (this.device.model == "527") {
+            accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson Pure Hot + Cool " + this.device.model);
+        } else if (this.device.model == "438" || this.device.model == "520") {
             accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson Pure Cool " + this.device.model);
         } else {
             accessoryInformationService.setCharacteristic(Characteristic.Model, "Dyson " + this.device.model);
@@ -167,11 +174,20 @@ class DysonLinkAccessory {
             this.heater.getCharacteristic(Characteristic.CurrentHeaterCoolerState)
                 .on("set", this.device.setCurrentHeaterCoolerState.bind(this.device))
                 .on("get", this.device.getCurrentHeaterCoolerState.bind(this.device));
-            
 
-            this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
-                .on("get", this.device.getHeaterCoolerState.bind(this.device))
-                .on("set", this.device.setHeaterCoolerState.bind(this.device));
+            if (this.device.model === '527') {
+                this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+                    .on("get", this.device.getHeaterCoolerState.bind(this.device))
+                    .on("set", this.device.setHeaterCoolerState.bind(this.device))
+                    .setProps({
+                        // Disable COOL and AUTO, leave only HEAT
+                        validValues: [1],
+                    });
+            } else {
+                this.heater.getCharacteristic(Characteristic.TargetHeaterCoolerState)
+                    .on("get", this.device.getHeaterCoolerState.bind(this.device))
+                    .on("set", this.device.setHeaterCoolerState.bind(this.device));
+            }
 
             this.heater.getCharacteristic(Characteristic.CurrentTemperature)
                 .on("get", this.device.getTemperture.bind(this.device));
@@ -233,7 +249,7 @@ class DysonLinkAccessory {
         }
 
         // Add jet focus for Cool/Heat and 2018 Cool device
-        if(this.device.heatAvailable || this.device.is2018Dyson) {
+        if((this.device.heatAvailable && this.device.model !== '527') || this.device.is2018Dyson) {
             if(this.focusModeVisible) {
                 this.log.info("Jet Focus mode button is added");
                 this.focusSwitch = this.getServiceBySubtype(Service.Switch, "Jet Focus - " + this.displayName, "Jet Focus");
