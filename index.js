@@ -141,13 +141,19 @@ class DysonPlatform {
             country = "US"
         }
 
+        let DYSON_API_URL = "api.cp.dyson.com";
+        if (country == "CN"){
+
+            DYSON_API_URL = "api.cp.dyson.cn"
+        }
+
         let postData = {
             Email: email,
             Password: password
         };
         let postBody = JSON.stringify(postData);
 
-        let DYSON_API_URL = "api.cp.dyson.com";
+        
         var options = {
             hostname: DYSON_API_URL,
             port: 443,
