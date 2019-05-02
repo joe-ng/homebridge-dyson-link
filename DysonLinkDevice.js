@@ -36,7 +36,7 @@ class DysonLinkDevice {
 
             this.mqttEvent = new EventEmitter();
             // There can be 11 listeners for this at the same time
-            this.mqttEvent.setMaxListeners(15);
+            this.mqttEvent.setMaxListeners(30);
             this.environmentEvent = new EventEmitter();
             var mqttClientOptions = {
                 username: this._id,
@@ -85,18 +85,27 @@ class DysonLinkDevice {
 
 
     requestForCurrentUpdate() {
-        // Only do this when we have less than one listener to avoid multiple call
-        let senorlisternerCount = this.environmentEvent.listenerCount(this.SENSOR_EVENT);
-        let fanlisternerCount = this.mqttEvent.listenerCount(this.STATE_EVENT);
-        this.log.debug("Number of listeners - sensor:"+ senorlisternerCount + " fan:" + fanlisternerCount);
-        if(senorlisternerCount <=1 && fanlisternerCount <=1) {
+        // Only do this when we have less than one listener to avoid multiple call 
+        // OR when there are too many listeners (that might suggest that the previous calls were lost for some reason)
+        let senorlistenerCount = this.environmentEvent.listenerCount(this.SENSOR_EVENT);
+        let fanlistenerCount = this.mqttEvent.listenerCount(this.STATE_EVENT);
+        this.log.debug("Number of listeners - sensor:"+ senorlistenerCount + " fan:" + fanlistenerCount);
+        let tooManyListener = senorlistenerCount > 4 || fanlistenerCount >10;
+        if((senorlistenerCount <=1 && fanlistenerCount <=1) || tooManyListener) {
             this.log("Request for current state update");
+            if (tooManyListener) {
+                this.log("Too many listerner. Do another publish now");
+            }
             let currentTime = new Date();
-                if(this.mqttClient.connected){
+            if(this.mqttClient.connected){
+                this.log("Client is connected. Publish request now.");
                 this.mqttClient.publish(this.commandTopic, JSON.stringify({
                     msg: 'REQUEST-CURRENT-STATE',
                     time: currentTime.toISOString()
                 }));
+            }
+            else{
+                this.log("Client is NOT connected. Skip publishing.");
             }
         }
     }
