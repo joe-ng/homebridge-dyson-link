@@ -141,9 +141,9 @@ class DysonPlatform {
             country = "US"
         }
 
-        let DYSON_API_URL = "api.cp.dyson.com";
+        let DYSON_API_URL = "appapi.cp.dyson.com";
         if (country == "CN"){            
-            DYSON_API_URL = "api.cp.dyson.cn"
+            DYSON_API_URL = "appapi.cp.dyson.cn"
             this.log.info("Country code is CN. Changed to use CN server -" + DYSON_API_URL);
         }
 
