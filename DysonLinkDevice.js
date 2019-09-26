@@ -309,6 +309,8 @@ class DysonLinkDevice {
             });
             // Request for update
             this.requestForCurrentUpdate();
+        } else {
+            callback(null, 0);
         }
     }
 
