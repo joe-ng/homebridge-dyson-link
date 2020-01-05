@@ -14,12 +14,12 @@ class DysonEnvironmentState {
 
         // Gets the highest value, which means the one with the baddest results
         this._airQuality = Math.max(
-            this.getCharacteristicValue(newState.data.pm25), 
+            this.getCharacteristicValue(newState.data.pm25),
             this.getCharacteristicValue(newState.data.pm10),
             this.getCharacteristicValue(newState.data.va10),
             this.getCharacteristicValue(newState.data.noxl),
             p, v);
-        
+
         this._humidity = Number.parseInt(newState.data.hact);
         // Reference: http://aakira.hatenablog.com/entry/2016/08/12/012654
         this._temperature = Number.parseFloat(newState.data.tact) / 10 - 273;
@@ -40,6 +40,12 @@ class DysonEnvironmentState {
         if (!rawValue) {
             return 0;
         }
+
+       // If the sensor is OFF, 0 is returned.
+        if (rawValue == "OFF") {
+            return 0;
+        }
+
         let integerValue = Number.parseInt(rawValue);
 
         // Reduces the scale from 0-100 to 0-10 as used in the Dyson app
