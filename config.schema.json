@@ -1,0 +1,64 @@
+{
+  "pluginAlias": "homebridge-dyson-link",
+  "pluginType": "platform",
+  "singular": false,
+  "headerDisplay": "Optional content to display above the plugin config. Supports markdown.",
+  "footerDisplay": "Optional content to display below the plugin config. Supports markdown.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "",
+        "type": "string",
+        "default": "DysonPlatform",
+        "required": true
+      },
+      "platform":{
+          "title": "",
+          "type": "string",
+          "default": "DysonPlatform",
+          "required": true
+      },
+      "name": {
+        "title": "",
+        "type": "string",
+        "required": true
+      },
+      "Accessories": {
+        "type": "array",
+        "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "title": "ip",
+            "type": "string",
+            "default": "192.168.1.1",
+            "required": true,
+            "format": "hostname"
+          },
+          "maxHeight": {
+            "title": "displayName",
+            "type": "integer",
+            "default": 720,
+            "minimum": 1,
+            "description": "The maximum height reported to HomeKit"
+          },
+          "maxFPS": {
+            "title": "serialNumber",
+            "type": "string",
+            "default": "DYSON-XXX-XX-XXXXXXXX-XXX",
+            "description": "The maximum frame rate of the stream"
+          },
+          "maxBitrate": {
+            "title": "password",
+            "type": "string",
+            "default": "password of your device",
+            "minimum": 1,
+            "description": "The maximum bit rate of the stream"
+          }
+        }
+      }
+     }
+    }
+  }
+}
