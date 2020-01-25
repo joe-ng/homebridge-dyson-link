@@ -11,16 +11,27 @@
         "type": "string",
         "required": true
       },
+      "email":{
+          "type": "string",
+          "default": "dysonuser@dyson.com",
+          "required": false,
+            "description": "For newer models, (like TP04/DP04), authentication is enabled by using a Dyson account registered with the device."
+      },
+      "password":{
+          "type": "string",
+          "default": "password",
+          "required": false,
+            "description": "For newer models, (like TP04/DP04), authentication is enabled by using a Dyson account registered with the device."
+      },
+      "country":{
+          "type": "string",
+          "default": "US",
+          "required": false
+      },
       "platform":{
-          "title": "",
           "type": "string",
           "default": "DysonPlatform",
           "required": true
-      },
-      "name": {
-        "title": "",
-        "type": "string",
-        "required": true
       },
       "Accessories": {
         "type": "array",
@@ -53,7 +64,7 @@
             "type": "string",
             "default": "password of your device",
             "minimum": 1,
-            "description": "SSID Password of Product"
+            "description": "SSID Password or "
           }
         }
       }
