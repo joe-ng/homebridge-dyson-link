@@ -8,9 +8,7 @@
     "type": "object",
     "properties": {
       "name": {
-        "title": "",
         "type": "string",
-        "default": "DysonPlatform",
         "required": true
       },
       "platform":{
@@ -29,32 +27,33 @@
         "items": {
         "type": "object",
         "properties": {
-          "source": {
-            "title": "ip",
+          "ip": {
+            "title": "IP Address",
             "type": "string",
             "default": "192.168.1.1",
             "required": true,
-            "format": "hostname"
+            "format": "hostname",
+            "description": "IP Address of Dyson Product"
           },
-          "maxHeight": {
-            "title": "displayName",
-            "type": "integer",
-            "default": 720,
+          "displayName": {
+            "title": "Display Name",
+            "type": "string",
+            "default": "Dyson",
             "minimum": 1,
-            "description": "The maximum height reported to HomeKit"
+            "description": "Name to be shown on Home App"
           },
-          "maxFPS": {
-            "title": "serialNumber",
+          "serialNumber": {
+            "title": "Serial Number",
             "type": "string",
             "default": "DYSON-XXX-XX-XXXXXXXX-XXX",
-            "description": "The maximum frame rate of the stream"
+            "description": "Serial Number off of Dyson Product"
           },
-          "maxBitrate": {
-            "title": "password",
+          "password": {
+            "title": "Password",
             "type": "string",
             "default": "password of your device",
             "minimum": 1,
-            "description": "The maximum bit rate of the stream"
+            "description": "SSID Password of Product"
           }
         }
       }
