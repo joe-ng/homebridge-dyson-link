@@ -85,7 +85,7 @@ class DysonLinkDevice {
 
 
     requestForCurrentUpdate() {
-        // Only do this when we have less than one listener to avoid multiple call 
+        // Only do this when we have less than one listener to avoid multiple call
         // OR when there are too many listeners (that might suggest that the previous calls were lost for some reason)
         let senorlistenerCount = this.environmentEvent.listenerCount(this.SENSOR_EVENT);
         let fanlistenerCount = this.mqttEvent.listenerCount(this.STATE_EVENT);
@@ -490,12 +490,12 @@ class DysonLinkDevice {
     }
 
     getTemperture(callback) {
-        
+
         this.log.debug(this.displayName + " Get temperture");
         if (this.notUpdatedRecently()) {
             if(this.mqttClient.connected){
                 this.environmentEvent.once(this.SENSOR_EVENT, () => {
-                    this.log.info(this.displayName + "- temperture new value: " + this.environment.temperature);
+                    this.log.info(this.displayName + " - Temperature new value: " + this.environment.temperature);
                     // Wait until the update and return
                     callback(null, this.environment.temperature);
                 });
@@ -507,7 +507,7 @@ class DysonLinkDevice {
             }
         }
         else {
-            this.log.info(this.displayName + "- temperture cached value: " + this.environment.temperature);
+            this.log.info(this.displayName + " - Temperature cached value: " + this.environment.temperature);
             callback(null, this.environment.temperature);
         }
     }
@@ -517,7 +517,7 @@ class DysonLinkDevice {
         if (this.notUpdatedRecently()) {
             if(this.mqttClient.connected){
                 this.environmentEvent.once(this.SENSOR_EVENT, () => {
-                    this.log.info(this.displayName + "- humidity new value: " + this.environment.humidity);
+                    this.log.info(this.displayName + " - Humidity new value: " + this.environment.humidity);
                     // Wait until the update and return
                     callback(null, this.environment.humidity);
                 });
@@ -529,7 +529,7 @@ class DysonLinkDevice {
             }
         }
         else {
-            this.log.info(this.displayName + "- humidity cached value: " + this.environment.humidity);
+            this.log.info(this.displayName + " - Humidity cached value: " + this.environment.humidity);
             callback(null, this.environment.humidity);
         }
     }
@@ -539,7 +539,7 @@ class DysonLinkDevice {
         if (this.notUpdatedRecently()) {
             if(this.mqttClient.connected){
                 this.environmentEvent.once(this.SENSOR_EVENT, () => {
-                    this.log.info(this.displayName + " - air quality new value: " + this.environment.airQuality);
+                    this.log.info(this.displayName + " - Air quality new value: " + this.environment.airQuality);
                     // Wait until the update and return
                     callback(null, this.environment.airQuality);
                 });
@@ -551,7 +551,7 @@ class DysonLinkDevice {
             }
         }
         else {
-            this.log.info(this.displayName + "- air quality cached value: " + this.environment.airQuality);
+            this.log.info(this.displayName + " - Air quality cached value: " + this.environment.airQuality);
             callback(null, this.environment.airQuality);
         }
     }
