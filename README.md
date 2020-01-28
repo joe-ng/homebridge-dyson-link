@@ -56,7 +56,7 @@ For newer models, (like TP04/DP04), authentication is enabled by using a Dyson a
       "name": "DysonPlatform",
       "email": "dysonuser@dyson.com", // or set DYSON_EMAIL="email"
       "password": "password",         // or set DYSON_PASSWORD="password"
-      "country": "US"                 // be sure to change if not US
+      "country": "US",                 // be sure to change if not US
       "accessories": [
         {
           "ip": "ip of your device",
