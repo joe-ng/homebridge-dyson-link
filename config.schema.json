@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "homebridge-dyson-link",
+  "pluginAlias": "DysonPlatform",
   "pluginType": "platform",
   "singular": false,
   "headerDisplay": "Optional content to display above the plugin config. Supports markdown.",
@@ -27,11 +27,6 @@
           "type": "string",
           "default": "US",
           "required": false
-      },
-      "platform":{
-          "type": "string",
-          "default": "DysonPlatform",
-          "required": true
       },
       "accessories": {
         "type": "array",
