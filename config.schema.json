@@ -33,7 +33,7 @@
           "default": "DysonPlatform",
           "required": true
       },
-      "Accessories": {
+      "accessories": {
         "type": "array",
         "items": {
         "type": "object",
