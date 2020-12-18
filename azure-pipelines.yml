@@ -18,3 +18,7 @@ steps:
 - script: |
     npm install
   displayName: 'npm install'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(System.DefaultWorkingDirectory)'
