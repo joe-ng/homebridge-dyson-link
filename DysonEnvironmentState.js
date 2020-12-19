@@ -46,6 +46,11 @@ class DysonEnvironmentState {
             return 0;
         }
 
+        // If the sensor is still being initialized, ignore it.
+        if (rawValue == "INIT") {
+            return 0;   
+        } 
+
         let integerValue = Number.parseInt(rawValue);
 
         // Reduces the scale from 0-100 to 0-10 as used in the Dyson app
