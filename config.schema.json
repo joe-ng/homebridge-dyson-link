@@ -1,0 +1,141 @@
+{
+  "pluginAlias": "DysonPlatform",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Optional content to display above the plugin config. Supports markdown.",
+  "footerDisplay": "Optional content to display below the plugin config. Supports markdown.",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "default": "DysonPlatform",
+        "required": true,
+        "title": "Name"
+      },
+      "email": {
+        "type": "string",
+        "required": true,
+        "placehlder": "dysonuser@dyson.com",
+        "title": "Dyson E-mail"
+      },
+      "password": {
+        "type": "string",
+        "required": true,
+        "placehlder": "password",
+        "title": "Dyson Password"
+      },
+      "country": {
+        "type": "string",
+        "required": false,
+        "placehlder": "US",
+        "title": "Country",
+        "description": "2 Digit Country Abbreviation."
+      },
+      "accessories": {
+        "type": "array",
+        "title": "Accessories",
+        "items": {
+          "type": "object",
+          "properties": {
+            "ip": {
+              "type": "string",
+              "title": "IP",
+              "placehlder": "US",
+              "required": true
+            },
+            "displayName": {
+              "type": "string",
+              "title": "Display Name",
+              "placehlder": "Living Room Fan",
+              "required": true,
+              "description": "Name to be shown on Home App"
+            },
+            "serialNumber": {
+              "type": "string",
+              "placehlder": "XXX-XX-XXXXXXXX",
+              "title": "Serial Number",
+              "required": true
+            },
+            "password": {
+              "type": "string",
+              "placehlder": "password",
+              "title": "Dyson Device Password",
+              "required": true
+            },
+            "nightModeVisible": {
+              "type": "boolean",
+              "title": "Show Night Mode",
+              "required": false
+            },
+            "focusModeVisible": {
+              "type": "boolean",
+              "title": "Show Focus Mode",
+              "required": false
+            },
+            "autoModeVisible": {
+              "type": "boolean",
+              "title": "Show Auto Mode",
+              "required": false
+            }
+          }
+        }
+      }
+    }
+  },
+  "layouts": [
+    "name",
+    "email",
+    "password",
+    "country",
+    {
+      "type": "array",
+      "title": "Accessories",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        {
+          "type": "object",
+          "title": "Accessories",
+          "expandable": true,
+          "expanded": false,
+          "items": [
+            "ip",
+            "displayName",
+            "serialNumber",
+            "password",
+            "nightModeVisible",
+            "focusModeVisible",
+            "autoModeVisible"
+          ]
+        }
+      ]
+    }
+  ],
+  "layout": [
+    "name",
+    "email",
+    "password",
+    "country",
+    {
+        "key": "accessories",
+        "type": "array",
+        "expandable": true,
+        "expanded": true,
+        "items": [
+            {
+                "type": "fieldset",
+                "items": [
+                  "accessories[].ip",
+                  "accessories[].displayName",
+                  "accessories[].serialNumber",
+                  "accessories[].password",
+                  "accessories[].nightModeVisible",
+                  "accessories[].focusModeVisible",
+                  "accessories[].autoModeVisible"
+                ]
+            }
+        ]
+    }
+]
+}
