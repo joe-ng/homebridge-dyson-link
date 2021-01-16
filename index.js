@@ -142,7 +142,7 @@ class DysonPlatform {
         }
 
         let DYSON_API_URL = "appapi.cp.dyson.com";
-        if (country == "CN"){            
+        if (country == "CN"){
             DYSON_API_URL = "appapi.cp.dyson.cn"
             this.log.info("Country code is CN. Changed to use CN server -" + DYSON_API_URL);
         }
@@ -153,7 +153,7 @@ class DysonPlatform {
         };
         let postBody = JSON.stringify(postData);
 
-        
+
         var options = {
             hostname: DYSON_API_URL,
             port: 443,
@@ -161,7 +161,8 @@ class DysonPlatform {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Content-Length': postBody.length
+                'Content-Length': postBody.length,
+                'User-Agent': 'Mozilla/5.0'
             },
             rejectUnauthorized: false
         };
@@ -186,7 +187,8 @@ class DysonPlatform {
                     port: 443,
                     path: '/v2/provisioningservice/manifest',
                     headers: {
-                        "Authorization": auth
+                        "Authorization": auth,
+                        'User-Agent': 'Mozilla/5.0'
                     },
                     rejectUnauthorized: false
                 };
