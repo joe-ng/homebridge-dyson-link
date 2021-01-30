@@ -162,7 +162,7 @@ class DysonPlatform {
             headers: {
                 'Content-Type': 'application/json',
                 'Content-Length': postBody.length,
-                'User-Agent': 'Mozilla/5.0'
+                'User-Agent': 'android client'
             },
             rejectUnauthorized: false
         };
@@ -188,7 +188,7 @@ class DysonPlatform {
                     path: '/v2/provisioningservice/manifest',
                     headers: {
                         "Authorization": auth,
-                        'User-Agent': 'Mozilla/5.0'
+                        'User-Agent': 'android client'
                     },
                     rejectUnauthorized: false
                 };
